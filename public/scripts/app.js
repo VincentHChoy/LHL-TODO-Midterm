@@ -8,43 +8,42 @@ const dummyData = [
 ];
 
 $(document).ready(function () {
+  //drag and drop UI
   $(function () {
     $(".sortable").sortable();
   });
 
+  //ChartJS
+  const labels = ["January", "February", "March", "April", "May", "June"];
 
-  var options = {
-    title: {
-      text: "Desktop OS Market Share in 2017",
-    },
-    subtitles: [
+  const data = {
+    labels: ["Red", "Blue", "Yellow"],
+    datasets: [
       {
-        text: "As of November, 2017",
-      },
-    ],
-    animationEnabled: true,
-    data: [
-      {
-        type: "pie",
-        startAngle: 40,
-        toolTipContent: "<b>{label}</b>: {y}%",
-        showInLegend: "true",
-        legendText: "{label}",
-        indexLabelFontSize: 16,
-        indexLabel: "{label} - {y}%",
-        dataPoints: [
-          { y: 48.36, label: "Windows 7" },
-          { y: 26.85, label: "Windows 10" },
-          { y: 1.49, label: "Windows 8" },
-          { y: 6.98, label: "Windows XP" },
-          { y: 6.53, label: "Windows 8.1" },
-          { y: 2.45, label: "Linux" },
-          { y: 3.32, label: "Mac OS X 10.12" },
-          { y: 4.03, label: "Others" },
+        label: "My First Dataset",
+        data: [300, 50, 100],
+        backgroundColor: [
+          "rgb(255, 99, 132)",
+          "rgb(54, 162, 235)",
+          "rgb(255, 205, 86)",
         ],
+        hoverOffset: 4,
       },
     ],
-  };
-  $("#chartContainer").CanvasJSChart(options);
 
+  };
+
+  const config = {
+    type: "pie",
+    data: data,
+    options: {
+      plugins: {
+        legend: {
+          position: "right",
+        },
+      },
+    },
+  };
+
+  const myChart = new Chart(document.getElementById("myChart"), config);
 });
