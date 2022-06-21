@@ -12,15 +12,16 @@
       integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
       crossorigin="anonymous"
     />
-<script src="https://kit.fontawesome.com/6a96aa4e81.js" crossorigin="anonymous"></script>
+    <script
+      src="https://kit.fontawesome.com/6a96aa4e81.js"
+      crossorigin="anonymous"
+    ></script>
     <link rel="stylesheet" href="../styles/vote.css" type="text/css" />
     <script type="text/javascript" src="/vendor/jquery-3.0.0.js"></script>
     <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
     <script type="text/javascript" src="/scripts/app.js"></script>
     <script>
-      $(function () {
-        $(".sortable").sortable();
-      });
+
     </script>
     <title>Decision Maker</title>
   </head>
@@ -35,6 +36,7 @@
           <%-include('partials/_vote-container') %>
         </ul>
       </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
     </main>
   </body>
 </html>
