@@ -14,7 +14,6 @@ $(document).ready(function () {
   });
 
   //ChartJS
-  const labels = ["January", "February", "March", "April", "May", "June"];
 
   const data = {
     labels: ["Red", "Blue", "Yellow"],
@@ -30,7 +29,6 @@ $(document).ready(function () {
         hoverOffset: 4,
       },
     ],
-
   };
 
   const config = {
@@ -46,4 +44,23 @@ $(document).ready(function () {
   };
 
   const myChart = new Chart(document.getElementById("myChart"), config);
+
+  //copy to clipboard
+
+  const copyToClipboard = function () {
+    /* Get the text field */
+    var copyText = document.getElementById("myInput");
+
+    /* Select the text field */
+    copyText.select();
+    copyText.setSelectionRange(0, 99999); /* For mobile devices */
+
+    /* Copy the text inside the text field */
+    navigator.clipboard.writeText(copyText.value);
+
+    /* Alert the copied text */
+    alert("Copied the text: " + copyText.value);
+  };
+
+  $("#copy-button").click(copyToClipboard);
 });

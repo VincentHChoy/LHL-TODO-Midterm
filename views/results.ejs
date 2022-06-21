@@ -15,18 +15,32 @@
 
     <script type="text/javascript" src="/vendor/jquery-3.0.0.js"></script>
     <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
-    <script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script defer type="text/javascript" src="/scripts/app.js"></script>
 
     <title>Decision Maker</title>
   </head>
   <body>
-    <main class="text-center">
-      <h1 class="text-color">Straw Poll</h1>
-      <div>
+    <main>
+      <h1 class="text-center">Straw Poll</h1>
+      <div class="chart-container">
         <canvas id="myChart"></canvas>
       </div>
+      <input
+        id="myInput"
+        class="copy-link"
+        type="text"
+        value="strawpoll.com/randomstringhere"
+        readonly
+      />
+      <button
+        type="button"
+        id="copy-button"
+        class="btn btn-warning"
+        onclick="copyToClipboard()"
+      >
+        Copy
+      </button>
     </main>
   </body>
 </html>

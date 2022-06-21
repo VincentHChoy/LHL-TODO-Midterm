@@ -41,3 +41,15 @@ div ul li{
 div ul li:hover{
   cursor: pointer;
 }
+
+.chart-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 70%;
+}
+
+.copy-link{
+  margin: 1em;
+  width: 50%;
+}
