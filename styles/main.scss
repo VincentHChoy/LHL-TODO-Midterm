@@ -15,3 +15,27 @@ body {
     rgba(163, 208, 219, 1) 100%
   );
 }
+
+main{
+  width: 60%;
+}
+
+div ul{
+  list-style: none;
+  padding: 1em;
+}
+
+div ul li{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  text-align: left;
+  width: 100%;
+  list-style: none;
+  padding: 1em;
+  margin: 1em;
+}
+
+div ul li:hover{
+  cursor: pointer;
+}
