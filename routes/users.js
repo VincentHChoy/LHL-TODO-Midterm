@@ -9,17 +9,6 @@ const express = require("express");
 const router = express.Router();
 
 module.exports = (database) => {
-  // router.get("/", (req, res) => {
-  //   database
-  //     .query(`SELECT * FROM users;`)
-  //     .then((data) => {
-  //       const users = data.rows;
-  //       res.json({ users });
-  //     })
-  //     .catch((err) => {
-  //       res.status(500).json({ error: err.message });
-  //     });
-  // });
 
   // Home page to begin the poll creation
   router.get("/", (req, res) => {
@@ -38,18 +27,30 @@ module.exports = (database) => {
       adminLink: `/poll/${adminID}`,
     };
 
-    database.addPoll(pollData, links)
-    .then(poll => {
-      if (!poll) {
-        res.send({error: "error"});
-        return;
-      }
-      req.session.userId = poll.id;
-      res.render("vote", links);
-    })
-    .catch(e => res.send(e));
+    database
+      .addPoll(pollData, links)
+      .then((poll) => {
+        if (!poll) {
+          res.send({ error: "error" });
+          return;
+        }
+        req.session.userId = poll.id;
+        res.render("vote", links);
+      })
+      .catch((e) => res.send(e));
   });
 
+  // Display results of a poll
+  router.get("/poll:adminID", (req, res) => {
+    const adminID = req.params.adminID;
+    database
+      .getResults(adminID)
+      .then((result) => res.render("result", result))
+      .catch((e) => {
+        console.error(e);
+        res.send(e);
+      });
+  });
 
   // Helper funciton to generate random ID for links
   const generateUniqueRandomPollId = () => {
