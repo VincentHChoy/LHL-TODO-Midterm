@@ -3,4 +3,8 @@ public/styles
 .env
 *.log
 *.sqlite3
+<<<<<<< HEAD
 package-lock.json
+=======
+.DS_Store
+>>>>>>> 701ead437215b202959524a835c9b85b6368ae79
