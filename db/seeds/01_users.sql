@@ -9,7 +9,7 @@ INSERT INTO polls (created_by, question_text, created_at, end_date, active)
 VALUES (1, 'Where should we eat tonight?', CURRENT_TIME, 2022-09-22, TRUE),
 (2, 'What movie should we watch this weekend?', CURRENT_TIME, 2022-09-22, TRUE),
 (3, 'Which TV show is best?', CURRENT_TIME, 2022-09-22, TRUE),
-(4, 'Which is the best vacation spot?', CURRENT_TIME, 2022-09-22, TRUE),
+(4, 'Which is the best travel destination?', CURRENT_TIME, 2022-09-22, TRUE);
 
 INSERT INTO options (poll_id, option_text)
 VALUES (1, 'Sunshine Diner'),
@@ -19,5 +19,14 @@ VALUES (1, 'Sunshine Diner'),
 (2, 'Terminator 2'),
 (2, 'First Blood'),
 (2, 'Tampopo'),
-(2, 'Enter The Dragon')
+(2, 'Enter The Dragon'),
+(3, 'Seinfeld'),
+(3, 'Friends'),
+(3, 'Arrested Development'),
+(3, 'Buffy the Vampire Slayer'),
+(4, 'Europe'),
+(4, 'Asia'),
+(4, 'Africa'),
+(4, 'South America');
+
 
