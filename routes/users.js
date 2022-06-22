@@ -12,8 +12,7 @@ module.exports = (database) => {
 
   // Home page to begin the poll creation
   router.get("/", (req, res) => {
-    const templateVars = {};
-    res.render("index", templateVars);
+    res.render("index");
   });
 
   // Submit new pole data and links created.
@@ -25,8 +24,8 @@ module.exports = (database) => {
     const shareID = generateUniqueRandomPollId();
     const adminID = generateUniqueRandomPollId();
     const links = {
-      shareLink: `/poll/${shareID}`,
-      adminLink: `/poll/${adminID}`,
+      shareLink: `/poll:${shareID}`,
+      adminLink: `/poll:${adminID}`,
     };
 
     database
@@ -46,9 +45,9 @@ module.exports = (database) => {
   // Result object from dB will have "poll question" and "options"
   // to render
   router.get("/poll:shareID", (req, res) => {
-    const adminID = req.params.adminID;
+    const shareID = req.params.shareID;
     database
-      .getResults(adminID)
+      .getPollData(shareID)
       .then((result) => res.render("vote", result))
       .catch((e) => {
         console.error(e);
@@ -60,21 +59,9 @@ module.exports = (database) => {
   // Result object from dB will have "poll question", "legend" &
   // data for pie chart.
   router.post("/poll:shareID", (req, res) => {
-    const adminID = req.params.adminID;
+    const shareID = req.params.shareID;
     database
-      .getResults(adminID)
-      .then((result) => res.render("vote", result))
-      .catch((e) => {
-        console.error(e);
-        res.send(e);
-      });
-  });
-
-  // Display results of a poll
-  router.get("/poll:adminID", (req, res) => {
-    const adminID = req.params.adminID;
-    database
-      .getResults(adminID)
+      .saveResults(shareID)
       .then((result) => res.render("result", result))
       .catch((e) => {
         console.error(e);
@@ -82,17 +69,21 @@ module.exports = (database) => {
       });
   });
 
-  // Send votes to the database
-  router.post("/poll:shareID",(req, res)=>{
-    const shareID = req.params.shareID;
+  // Get results of a poll and display results page
+  // Result object from dB will have "poll question", "legend" &
+  // data for pie chart.
+  router.get("/poll:shareID/results", (req, res) => {
+    const shareID = req.params.adminID;
     database
-      .sendVotes(shareID)
-      .then((result) => res.render("vote", result))
+      .getResults(shareID)
+      .then((result) => res.render("result", result))
       .catch((e) => {
         console.error(e);
         res.send(e);
       });
   });
+
+
 
   // Helper funciton to generate random ID for links
   const generateUniqueRandomPollId = () => {
