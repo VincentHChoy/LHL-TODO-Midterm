@@ -52,6 +52,18 @@ module.exports = (database) => {
       });
   });
 
+  // Send votes to the database
+  router.post("/poll:shareID",(req, res)=>{
+    const shareID = req.params.shareID;
+    database
+      .sendVotes(shareID)
+      .then((result) => res.render("vote", result))
+      .catch((e) => {
+        console.error(e);
+        res.send(e);
+      });
+  });
+
   // Helper funciton to generate random ID for links
   const generateUniqueRandomPollId = () => {
     let id = "";
