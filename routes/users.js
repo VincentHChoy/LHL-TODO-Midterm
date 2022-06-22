@@ -21,15 +21,15 @@ module.exports = (database) => {
   router.post("/poll", (req, res) => {
     const pollData = req.body;
 
-    const shareID = generateUniqueRandomPollId();
-    const adminID = generateUniqueRandomPollId();
-    const links = {
-      shareLink: `/poll:${shareID}`,
-      adminLink: `/poll:${adminID}`,
+    const shareID = generateUniqueId();
+    const adminID = generateUniqueId();
+    const ids = {
+      shareID,
+      adminID
     };
 
     database
-      .addPoll(pollData, links)
+      .addPoll(pollData, ids)
       .then((poll) => {
         if (!poll) {
           res.send({ error: "error" });
@@ -83,10 +83,8 @@ module.exports = (database) => {
       });
   });
 
-
-
   // Helper funciton to generate random ID for links
-  const generateUniqueRandomPollId = () => {
+  const generateUniqueId = () => {
     let id = "";
     let strLen = 6;
     const chars =
