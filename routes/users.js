@@ -16,7 +16,9 @@ module.exports = (database) => {
     res.render("index", templateVars);
   });
 
-  // Submit a new pole
+  // Submit new pole data and links created.
+  // Poll data includes question and options.
+  // Links contain new links.
   router.post("/poll", (req, res) => {
     const pollData = req.body;
 
@@ -38,6 +40,34 @@ module.exports = (database) => {
         res.render("vote", links);
       })
       .catch((e) => res.send(e));
+  });
+
+  // Get poll data and display on vote page.
+  // Result object from dB will have "poll question" and "options"
+  // to render
+  router.get("/poll:shareID", (req, res) => {
+    const adminID = req.params.adminID;
+    database
+      .getResults(adminID)
+      .then((result) => res.render("vote", result))
+      .catch((e) => {
+        console.error(e);
+        res.send(e);
+      });
+  });
+
+  // Post poll data and display results page
+  // Result object from dB will have "poll question", "legend" &
+  // data for pie chart.
+  router.post("/poll:shareID", (req, res) => {
+    const adminID = req.params.adminID;
+    database
+      .getResults(adminID)
+      .then((result) => res.render("vote", result))
+      .catch((e) => {
+        console.error(e);
+        res.send(e);
+      });
   });
 
   // Display results of a poll
