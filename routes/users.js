@@ -9,7 +9,6 @@ const express = require("express");
 const router = express.Router();
 
 module.exports = (database) => {
-
   // Home page to begin the poll creation
   router.get("/", (req, res) => {
     res.render("index");
@@ -25,7 +24,7 @@ module.exports = (database) => {
     const adminID = generateUniqueId();
     const ids = {
       shareID,
-      adminID
+      adminID,
     };
 
     database
@@ -35,8 +34,9 @@ module.exports = (database) => {
           res.send({ error: "error" });
           return;
         }
-        req.session.userId = poll.id;
-        res.render("vote", links);
+        const shareID = poll.shareID;
+        const shareLink = `/poll:${shareID}`;
+        res.redirect(shareLink);
       })
       .catch((e) => res.send(e));
   });
@@ -60,8 +60,9 @@ module.exports = (database) => {
   // data for pie chart.
   router.post("/poll:shareID", (req, res) => {
     const shareID = req.params.shareID;
+    const pollAnswers = req.body;
     database
-      .saveResults(shareID)
+      .saveResults(shareID, pollAnswers)
       .then((result) => res.render("result", result))
       .catch((e) => {
         console.error(e);
@@ -73,7 +74,7 @@ module.exports = (database) => {
   // Result object from dB will have "poll question", "legend" &
   // data for pie chart.
   router.get("/poll:shareID/results", (req, res) => {
-    const shareID = req.params.adminID;
+    const shareID = req.params.shareID;
     database
       .getResults(shareID)
       .then((result) => res.render("result", result))
