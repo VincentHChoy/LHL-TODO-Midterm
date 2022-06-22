@@ -14,14 +14,14 @@ CREATE TABLE polls (
   id SERIAL PRIMARY KEY NOT NULL,
   created_by INTEGER REFERENCES users(id) ON DELETE CASCADE,
   question_text VARCHAR(255) NOT NULL,
-  created_at TIMESTAMP,
-  end_date DATE,
+  created_at DATE NOT NULL,
+  end_date DATE NOT NULL,
   active BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 CREATE TABLE options (
   id SERIAL PRIMARY KEY NOT NULL,
-  poll INTEGER REFERENCES polls(id),
+  poll_id INTEGER REFERENCES polls(id),
   option_text VARCHAR(255) 
 );
 
