@@ -15,35 +15,67 @@ $(document).ready(function () {
 
   //ChartJS
 
-  const data = {
-    labels: ["Red", "Blue", "Yellow"],
-    datasets: [
-      {
-        label: "My First Dataset",
-        data: [300, 50, 100],
-        backgroundColor: [
-          "rgb(255, 99, 132)",
-          "rgb(54, 162, 235)",
-          "rgb(255, 205, 86)",
-        ],
-        hoverOffset: 4,
-      },
-    ],
-  };
+  const chartOptions = (dataRaw, type) => {
+    const getData = (data) => {
+      const labels = [];
+      const values = [];
+      for (const dataPoints of data) {
+        labels.push(dataPoints.label);
+        values.push(dataPoints.y);
+      }
+      return { labels, values };
+    };
 
-  const config = {
-    type: "pie",
-    data: data,
-    options: {
-      plugins: {
-        legend: {
-          position: "right",
+    // const randomColor = (howMany) => {
+    //   const output = [];
+    //   const colors = ["crimson", "blue", "aqua", "HotPink",'purple'];
+    //   for (let i = 0; i < howMany; i++) {
+    //     output.push('#' + Math.floor(Math.random()*16777215).toString(16));
+    //   }
+    //   return output
+    // };
+
+    const dataPoints = getData(dataRaw);
+    const colorsList = randomColor(dataPoints.labels.length)
+    console.log(colorsList)
+
+    const data = {
+      labels: dataPoints.labels,
+      datasets: [
+        {
+          label: "My First Dataset",
+          data: dataPoints.values,
+          backgroundColor: [
+            "crimson",
+            "orange",
+            "gold",
+            "green",
+            "DodgerBlue",
+            "indigo",
+            "pink",
+          ],
+          hoverOffset: 4,
+        },
+      ],
+    };
+
+    return {
+      type: type,
+      data: data,
+      options: {
+        plugins: {
+          legend: {
+            position: "right",
+          },
         },
       },
-    },
+    };
   };
 
-  const myChart = new Chart(document.getElementById("myChart"), config);
+  const myChart = new Chart(
+    document.getElementById("myChart"),
+    chartOptions(dummyData, "pie")
+  );
 
   //copy to clipboard
 

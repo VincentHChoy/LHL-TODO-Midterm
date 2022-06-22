@@ -13,7 +13,6 @@
       integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
       crossorigin="anonymous"
     />
-    <link rel="stylesheet" href="../styles/index.css" type="text/css">
     <script type="text/javascript" src="/vendor/jquery-3.0.0.js"></script>
     <script defer type="text/javascript" src="/scripts/app.js"></script>
     <title>Decision Maker</title>
@@ -28,8 +27,9 @@
       placeholder="type your question here"
       style="width: 300px; margin: 1em"
       />
-      <%- include('partials/_input') %>
-      <%- include('partials/_input') %>
+      <!-- change to for loop and remove the partial  -->
+      <%-include('partials/_input') %>
+      <%-include('partials/_input') %>
       <%-include('partials/_input') %>
       <%-include('partials/_input') %>
       <button type="submit" class="btn btn-primary">Submit</button>
