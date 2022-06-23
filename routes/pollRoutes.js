@@ -50,8 +50,9 @@ module.exports = (router, database) => {
   // Get poll data and display on vote page.
   // Result object from dB will have "poll question" and "options"
   // to render
-  router.get("/poll:shareID", (req, res) => {
+  router.get("/poll/:shareID", (req, res) => {
     const shareID = req.params.shareID;
+    console.log(shareID);
     database
       .getPollData(shareID)
       .then((result) => res.render("vote", result))
@@ -64,7 +65,7 @@ module.exports = (router, database) => {
   // Post poll data and display results page
   // Result object from dB will have "poll question", "legend" &
   // data for pie chart.
-  router.post("/poll:shareID", (req, res) => {
+  router.post("/poll/:shareID", (req, res) => {
     const shareID = req.params.shareID;
     const pollAnswers = req.body;
     database
@@ -79,7 +80,7 @@ module.exports = (router, database) => {
   // Get results of a poll and display results page
   // Result object from dB will have "poll question", "legend" &
   // data for pie chart.
-  router.get("/poll:shareID/results", (req, res) => {
+  router.get("/poll/:shareID/results", (req, res) => {
     const shareID = req.params.shareID;
     database
       .getResults(shareID)
