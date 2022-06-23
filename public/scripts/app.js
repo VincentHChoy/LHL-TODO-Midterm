@@ -7,6 +7,8 @@ const dummyData = [
   { label: "grape", y: 28 },
 ];
 
+console.log('can you see me')
+
 $(document).ready(function () {
   //drag and drop UI
   $(function () {
@@ -80,18 +82,9 @@ $(document).ready(function () {
   //copy to clipboard
 
   const copyToClipboard = function () {
-    /* Get the text field */
-    var copyText = document.getElementById("myInput");
-
-    /* Select the text field */
-    copyText.select();
-    copyText.setSelectionRange(0, 99999); /* For mobile devices */
-
-    /* Copy the text inside the text field */
-    navigator.clipboard.writeText(copyText.value);
-
-    /* Alert the copied text */
-    alert("Copied the text: " + copyText.value);
+    navigator.clipboard.writeText(window.location.href);
+    // /* Alert the copied text */
+    alert("Copied the url");
   };
 
   $("#copy-button").click(copyToClipboard);
