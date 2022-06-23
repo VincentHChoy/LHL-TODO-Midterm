@@ -36,8 +36,8 @@ $(document).ready(function () {
     // };
 
     const dataPoints = getData(dataRaw);
-    const colorsList = randomColor(dataPoints.labels.length)
-    console.log(colorsList)
+    // const colorsList = randomColor(dataPoints.labels.length)
+    // console.log(colorsList)
 
     const data = {
       labels: dataPoints.labels,
