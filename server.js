@@ -39,7 +39,7 @@ app.use(express.static("public"));
 const pollRouter = express.Router();
 const pollRoutes = require('./routes/pollRoutes');
 pollRoutes(pollRouter, db);
-app.use('/poll', pollRouter);
+app.use('/', pollRouter);
 
 // Widget routes - create and mount
 // const widgetRouter = express.Router();
