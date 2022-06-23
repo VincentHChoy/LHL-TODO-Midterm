@@ -52,7 +52,7 @@ module.exports = (router, database) => {
   // to render
   router.get("/poll/:shareID", (req, res) => {
     const shareID = req.params.shareID;
-    console.log(shareID);
+
     database
       .getPollData(shareID)
       .then((result) => res.render("vote", result))
@@ -68,6 +68,7 @@ module.exports = (router, database) => {
   router.post("/poll/:shareID", (req, res) => {
     const shareID = req.params.shareID;
     const pollAnswers = req.body;
+
     database
       .saveResults(shareID, pollAnswers)
       .then((result) => res.render("result", result))
@@ -82,6 +83,7 @@ module.exports = (router, database) => {
   // data for pie chart.
   router.get("/poll/:shareID/results", (req, res) => {
     const shareID = req.params.shareID;
+
     database
       .getResults(shareID)
       .then((result) => res.render("result", result))
