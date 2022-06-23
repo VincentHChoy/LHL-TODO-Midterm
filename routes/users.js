@@ -7,6 +7,27 @@
 
 const express = require("express");
 const router = express.Router();
+const formData = require("form-data");
+const Mailgun = require("mailgun.js");
+const mailgun = new Mailgun(formData);
+const mg = mailgun.client({
+  username: "api",
+  key: "79322908e21e95c27ed4b3f1d95a6871-4f207195-5a910630",
+});
+mg.messages
+  .create(sandbox38265a88329e4f3e8d5306fee38cddbe.mailgun.org, {
+    from: "StrawPoll <Straw poll.org>",
+    to: ["ENTER EMAIL VARIABLE HERE"],
+    subject: "Your poll here",
+    text: "an administrative link (which lets them access the results) and a submission link (which the user sends to their friends)",
+  })
+  .then((msg) => console.log(msg)) // logs response data
+  .catch((err) => console.log(err)); // logs any error`;
+
+// You can see a record of this email in your logs: https://app.mailgun.com/app/logs.
+
+// You can send up to 300 emails/day from this sandbox server.
+// Next, you should add your own domain so you can send 10000 emails/month for free.
 
 module.exports = (database) => {
   // Home page to begin the poll creation
