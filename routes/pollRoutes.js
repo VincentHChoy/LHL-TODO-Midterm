@@ -5,13 +5,19 @@
  * See: https://expressjs.com/en/guide/using-middleware.html#middleware.router
  */
 
-const express = require("express");
-// const router = express.Router();
-
 module.exports = (router, database) => {
   // Home page to begin the poll creation
   router.get("/poll", (req, res) => {
     res.render("index");
+  });
+
+  // Redirections to /poll
+  router.get("/", (req, res) => {
+    res.redirect("/poll");
+  });
+
+  router.get("/home", (req, res) => {
+    res.redirect("/poll");
   });
 
   // Submit new pole data and links created.
