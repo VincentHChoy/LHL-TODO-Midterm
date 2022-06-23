@@ -6,9 +6,9 @@
  */
 
 const express = require("express");
-const router = express.Router();
+// const router = express.Router();
 
-module.exports = (database) => {
+module.exports = (router, database) => {
   // Home page to begin the poll creation
   router.get("/", (req, res) => {
     res.render("index");
@@ -17,7 +17,7 @@ module.exports = (database) => {
   // Submit new pole data and links created.
   // Poll data includes question and options.
   // Links contain new links.
-  router.post("/poll", (req, res) => {
+  router.post("/", (req, res) => {
     const pollData = req.body;
 
     const shareID = generateUniqueId();
