@@ -5,6 +5,13 @@
  * See: https://expressjs.com/en/guide/using-middleware.html#middleware.router
  */
 
+// Mailgun setup
+const mailgun = require("mailgun-js");
+const DOMAIN = 'sandbox47b119268f754f2087647964e3cd6fa8.mailgun.org';
+const mg = mailgun({apiKey: "f867369ea219b6b15b91cc513a89c0a6-4f207195-2cf5d86e", domain: DOMAIN});
+//
+
+
 module.exports = (router, database) => {
   // Home page to begin the poll creation
   router.get("/poll", (req, res) => {
@@ -105,6 +112,24 @@ module.exports = (router, database) => {
       id = id.concat(chars[randIndex]);
     }
     return id;
+  };
+
+  // Helper function to send emails via mailgun
+  const sendEmail = () => {
+    const data = {
+      from: 'Sneha Mahajan <sneh.km@gmail.com>',
+      to: 'sneh.km@gmail.com',
+      subject: 'Hello',
+      text: 'Testing some Mailgun awesomness!'
+    };
+    mg.messages().send(data, function (error, body) {
+      if(!body.id) {
+        console.log("Email unsuccessful! Use a valid email address.");
+        return false;
+      }
+      console.log(`An email was just sent to: ${data.to}`);
+      return true;
+    });
   };
 
   return router;
