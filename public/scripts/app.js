@@ -1,3 +1,4 @@
+// Client facing scripts here
 const dummyData = [
   { label: "apple", y: 10 },
   { label: "orange", y: 15 },
@@ -25,18 +26,8 @@ $(document).ready(function () {
       return { labels, values };
     };
 
-    // const randomColor = (howMany) => {
-    //   const output = [];
-    //   const colors = ["crimson", "blue", "aqua", "HotPink",'purple'];
-    //   for (let i = 0; i < howMany; i++) {
-    //     output.push('#' + Math.floor(Math.random()*16777215).toString(16));
-    //   }
-    //   return output
-    // };
 
     const dataPoints = getData(dataRaw);
-    const colorsList = randomColor(dataPoints.labels.length)
-    console.log(colorsList)
 
     const data = {
       labels: dataPoints.labels,
