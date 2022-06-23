@@ -12,7 +12,9 @@ CREATE TABLE users (
 
 CREATE TABLE polls (
   id SERIAL PRIMARY KEY NOT NULL,
-  created_by INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  owner_email VARCHAR(255),
+  admin_link VARCHAR(255),
+  submit_link VARCHAR(255),
   question_text VARCHAR(255) NOT NULL,
   created_at DATE NOT NULL,
   end_date DATE NOT NULL,
@@ -27,9 +29,9 @@ CREATE TABLE options (
 
 CREATE TABLE votes (
   id SERIAL PRIMARY KEY NOT NULL,
-  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  user_email VARCHAR(255),
   poll_id INTEGER REFERENCES polls(id) ON DELETE CASCADE,
-  user_vote INTEGER REFERENCES options(id) ON DELETE CASCADE,
+  user_vote VARCHAR(255) REFERENCES options(id) ON DELETE CASCADE,
   vote_rank INTEGER,
   voted_at TIMESTAMP
 );
