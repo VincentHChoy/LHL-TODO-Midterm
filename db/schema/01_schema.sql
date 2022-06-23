@@ -30,5 +30,6 @@ CREATE TABLE votes (
   user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
   poll_id INTEGER REFERENCES polls(id) ON DELETE CASCADE,
   user_vote INTEGER REFERENCES options(id) ON DELETE CASCADE,
+  vote_rank INTEGER,
   voted_at TIMESTAMP
 );
