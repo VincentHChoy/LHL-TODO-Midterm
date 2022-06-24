@@ -23,6 +23,7 @@ CREATE TABLE polls (
 
 CREATE TABLE options (
   id SERIAL PRIMARY KEY NOT NULL,
+  owner_email VARCHAR(255),
   poll_id INTEGER REFERENCES polls(id),
   option_text VARCHAR(255) 
 );
@@ -31,7 +32,7 @@ CREATE TABLE votes (
   id SERIAL PRIMARY KEY NOT NULL,
   user_email VARCHAR(255),
   poll_id INTEGER REFERENCES polls(id) ON DELETE CASCADE,
-  user_vote VARCHAR(255) REFERENCES options(id) ON DELETE CASCADE,
+  user_vote INTEGER REFERENCES options(id) ON DELETE CASCADE,
   vote_rank INTEGER,
   voted_at TIMESTAMP
 );
