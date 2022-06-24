@@ -7,8 +7,6 @@ const dummyData = [
   { label: "grape", y: 28 },
 ];
 
-console.log('can you see me')
-
 $(document).ready(function () {
   //drag and drop UI
   $(function () {
@@ -27,7 +25,6 @@ $(document).ready(function () {
       }
       return { labels, values };
     };
-
 
     const dataPoints = getData(dataRaw);
 
@@ -78,4 +75,31 @@ $(document).ready(function () {
   };
 
   $("#copy-button").click(copyToClipboard);
+
+  const getListvalues = function () {
+    const output = [];
+    $("#ranking li").each(function () {
+      console.log(this.id);
+      output.push(this.id);
+
+      //targets value within list
+      //  console.log($(this).text());
+    });
+
+    return output;
+  };
+
+  $("#submit-ranking").click(getListvalues);
+
+  const getPollOptions = function () {
+    $("#poll-options input").each(function () {
+      console.log(this.value);
+      // output.push(this.id);
+
+      //targets value within list
+      //  console.log($(this).text());
+    });
+  };
+
+  $("#submit-poll").click(getPollOptions);
 });

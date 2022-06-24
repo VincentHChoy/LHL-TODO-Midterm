@@ -29,10 +29,11 @@ module.exports = (router, database) => {
     res.redirect("/poll");
   });
 
-  // Submit new pole data and links created.
+  // Submit new poll data and links created.
   // Poll data includes question and options.
   // Links contain new links.
   router.post("/poll", (req, res) => {
+    console.log("inside /poll");
     const pollData = req.body;
 
     const shareID = generateUniqueId();
@@ -42,9 +43,7 @@ module.exports = (router, database) => {
       adminID,
     };
 
-    database
-      .addPoll(pollData, ids)
-      .then((poll) => {
+    database.addPoll(pollData, ids).then((poll) => {
         if (!poll) {
           res.send({ error: "error" });
           return;
