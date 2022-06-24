@@ -12,30 +12,46 @@
       integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
       crossorigin="anonymous"
     />
+
+    <script type="text/javascript" src="/vendor/jquery-3.0.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script defer type="text/javascript" src="/scripts/app.js"></script>
     <script
       src="https://kit.fontawesome.com/6a96aa4e81.js"
       crossorigin="anonymous"
     ></script>
-    <script type="text/javascript" src="/vendor/jquery-3.0.0.js"></script>
-    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
-    <script type="text/javascript" src="/scripts/app.js"></script>
-    <script>
 
-    </script>
-    <title>Decision Maker</title>
+
+  <title>Decision Maker</title>
   </head>
   <body>
     <main class="text-center">
       <h1 class="text-color">Straw Poll</h1>
       <div>
-        <ul class="sortable">
-          <%-include('partials/_vote-container') %>
-          <%-include('partials/_vote-container') %>
-          <%-include('partials/_vote-container') %>
+        <ul id="ranking" class="sortable">
           <%-include('partials/_vote-container') %>
         </ul>
       </div>
-      <button type="submit" class="btn btn-primary">Submit</button>
+      <div class="flex-column">
+        <div class="mr-auto p-2">
+          <!--  should route to the results page -->
+          <form action="/poll/:shareID/results" method="GET"></form>
+            <button type="button" id="results-button" class="btn btn-success">
+            Results
+            </button>
+          </form>
+          <button type="button" id="copy-button" class="btn btn-warning">
+            Share
+          </button>
+
+        </div>
+      <form action="/poll/:shareID/results" method="POST">
+        <button id="submit-ranking" type="submit" class="btn btn-primary">
+          Submit
+        </button>
+      </form>
+      </div>
     </main>
   </body>
 </html>

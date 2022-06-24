@@ -26,7 +26,6 @@ $(document).ready(function () {
       return { labels, values };
     };
 
-
     const dataPoints = getData(dataRaw);
 
     const data = {
@@ -70,19 +69,37 @@ $(document).ready(function () {
   //copy to clipboard
 
   const copyToClipboard = function () {
-    /* Get the text field */
-    var copyText = document.getElementById("myInput");
-
-    /* Select the text field */
-    copyText.select();
-    copyText.setSelectionRange(0, 99999); /* For mobile devices */
-
-    /* Copy the text inside the text field */
-    navigator.clipboard.writeText(copyText.value);
-
-    /* Alert the copied text */
-    alert("Copied the text: " + copyText.value);
+    navigator.clipboard.writeText(window.location.href);
+    // /* Alert the copied text */
+    alert("Copied the url");
   };
 
   $("#copy-button").click(copyToClipboard);
+
+  const getListvalues = function () {
+    const output = [];
+    $("#ranking li").each(function () {
+      console.log(this.id);
+      output.push(this.id);
+
+      //targets value within list
+      //  console.log($(this).text());
+    });
+
+    return output;
+  };
+
+  $("#submit-ranking").click(getListvalues);
+
+  const getPollOptions = function () {
+    $("#poll-options input").each(function () {
+      console.log(this.value);
+      // output.push(this.id);
+
+      //targets value within list
+      //  console.log($(this).text());
+    });
+  };
+
+  $("#submit-poll").click(getPollOptions);
 });
