@@ -1,5 +1,9 @@
 
-<li class="border rounded">
-  <p>Item</p>
+<% for(var i = 0; i < 4; i++) { %>
+<li class="border rounded"
+    id = <%= i %>
+>
+  <p>Item <%= i %></p>
   <i class="fa-solid fa-bars"></i>
 </li>
+<% } %>
