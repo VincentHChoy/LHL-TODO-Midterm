@@ -35,7 +35,11 @@ module.exports = (router, database) => {
   // Links contain new links.
   router.post("/poll", (req, res) => {
     console.log("inside /poll");
-    const pollData = req.body;
+    const {
+      email,
+      questionText,
+      endDate
+    } = req.body;
 
     const shareID = generateUniqueId();
     const adminID = generateUniqueId();
@@ -44,7 +48,7 @@ module.exports = (router, database) => {
       adminID,
     };
 
-    database.addPoll(pollData, ids).then((poll) => {
+    database.createPoll(email, adminID, shareID, questionText, endDate).then((poll) => {
         if (!poll) {
           res.send({ error: "error" });
           return;
