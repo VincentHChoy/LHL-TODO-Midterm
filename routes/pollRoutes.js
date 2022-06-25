@@ -6,10 +6,11 @@
  */
 
 // Mailgun setup
+require("dotenv").config();
 const mailgun = require("mailgun-js");
-const DOMAIN = "sandbox47b119268f754f2087647964e3cd6fa8.mailgun.org";
+const DOMAIN = process.env.MAILGUN_DOMAIN;
 const mg = mailgun({
-  apiKey: "f867369ea219b6b15b91cc513a89c0a6-4f207195-2cf5d86e",
+  apiKey: process.env.API_KEY_MAILGUN,
   domain: DOMAIN,
 });
 //
@@ -34,7 +35,11 @@ module.exports = (router, database) => {
   // Links contain new links.
   router.post("/poll", (req, res) => {
     console.log("inside /poll");
-    const pollData = req.body;
+    const {
+      email,
+      questionText,
+      endDate
+    } = req.body;
 
     const shareID = generateUniqueId();
     const adminID = generateUniqueId();
@@ -43,7 +48,7 @@ module.exports = (router, database) => {
       adminID,
     };
 
-    database.addPoll(pollData, ids).then((poll) => {
+    database.createPoll(email, adminID, shareID, questionText, endDate).then((poll) => {
         if (!poll) {
           res.send({ error: "error" });
           return;
@@ -64,7 +69,6 @@ module.exports = (router, database) => {
                  Your administrator link: ${adminLink}`,
         };
         sendEmail(emailData);
-
         res.redirect(shareLink);
       })
       .catch((e) => res.send(e));
@@ -77,7 +81,7 @@ module.exports = (router, database) => {
     const shareID = req.params.shareID;
 
     database
-      .getPollData(shareID)
+      .showPoll(shareID)
       .then((result) => res.render("vote", result))
       .catch((e) => {
         console.error(e);
@@ -93,7 +97,8 @@ module.exports = (router, database) => {
     const pollAnswers = req.body;
 
     database
-      .saveResults(shareID, pollAnswers)
+    // How do we capture the votes for all 4 options in this query?
+      .voteOnPoll(shareID, pollAnswers)
       .then((result) => {
         const pollCreator = result.email;
 
@@ -120,7 +125,7 @@ module.exports = (router, database) => {
     const shareID = req.params.shareID;
 
     database
-      .getResults(shareID)
+      .getAllVotes(shareID)
       .then((result) => res.render("result", result))
       .catch((e) => {
         console.error(e);
