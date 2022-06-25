@@ -69,7 +69,6 @@ module.exports = (router, database) => {
                  Your administrator link: ${adminLink}`,
         };
         sendEmail(emailData);
-
         res.redirect(shareLink);
       })
       .catch((e) => res.send(e));
@@ -82,7 +81,7 @@ module.exports = (router, database) => {
     const shareID = req.params.shareID;
 
     database
-      .getPollData(shareID)
+      .showPoll(shareID)
       .then((result) => res.render("vote", result))
       .catch((e) => {
         console.error(e);
@@ -98,7 +97,8 @@ module.exports = (router, database) => {
     const pollAnswers = req.body;
 
     database
-      .saveResults(shareID, pollAnswers)
+    // How do we capture the votes for all 4 options in this query?
+      .voteOnPoll(shareID, pollAnswers)
       .then((result) => {
         const pollCreator = result.email;
 
@@ -125,7 +125,7 @@ module.exports = (router, database) => {
     const shareID = req.params.shareID;
 
     database
-      .getResults(shareID)
+      .getAllVotes(shareID)
       .then((result) => res.render("result", result))
       .catch((e) => {
         console.error(e);
