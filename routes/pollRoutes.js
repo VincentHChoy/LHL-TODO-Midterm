@@ -23,7 +23,7 @@ module.exports = (router) => {
     res.render("index");
   });
 
-  // Redirections to /poll
+  // Redirections to /poll or homepage
   router.get("/", (req, res) => {
     res.redirect("/poll");
   });
@@ -32,44 +32,78 @@ module.exports = (router) => {
     res.redirect("/poll");
   });
 
-  // Submit new poll data and links created.
-  // Poll data includes question and options.
-  // Links contain new links.
+  // Create new poll
   router.post("/poll", (req, res) => {
-    console.log("inside /poll");
-    const {
-      email,
-      questionText,
-      endDate
-    } = req.body;
+    const { email, questionText } = req.body;
 
-    const shareID = generateUniqueId();
-    const adminID = generateUniqueId();
-    const ids = {
-      shareID,
-      adminID,
-    };
-    // return;
-    database.createPoll(email, adminID, shareID, questionText, endDate).then((poll) => {
-      console.log("In Create Poll");
+    if (!email || !questionText) {
+      const message = ["Invalid data. Please enter the email address and a question!"];
+      res.status(403).render("index", message);
+      return;
+    }
+
+    database
+      .createPoll(email, questionText)
+      .then((poll) => {
         if (!poll) {
-          res.send({ error: "error" });
+          res.send({ error: "Couldn't create poll!" });
           return;
         }
-        const pollCreator = poll.email;
-        const shareID = poll.shareID;
-        const shareLink = `/poll:${shareID}`;
+        const id = poll.id;
+        res.redirect(`/poll/${id}/options`);
+      })
+      .catch((e) => res.send(e));
+  });
 
-        const adminID = poll.adminID;
-        const adminLink = `/poll:${adminID}`;
+  // Display poll question for new poll
+  router.get("/poll/:id/options", (req, res) => {
+    const { id } = req.params;
+
+    if (!id) {
+      res.status(403).render("index", ["Invalid data"]);
+      return;
+    }
+
+    database
+      .getPollQuestion(id)
+      .then((poll) => {
+        if (!poll) {
+          res.send({ error: "Couldn't get question!!" });
+          return;
+        }
+        const message = [ poll.question ];
+
+        res.render("options", message);
+      })
+      .catch((e) => res.send(e));
+  });
+
+  // Accept options for new poll
+  router.post("/poll/:id/options", (req, res) => {
+    const { option0, option1, option2, option3 } = req.body;
+    const { id } = req.params;
+    if (!option0 || !option1 || !option2 || !option3) {
+      res.status(403).render("index", ["Invalid data"]);
+      return;
+    }
+
+    database
+      .createOptions(id, option0, option1, option2, option3)
+      .then((result) => {
+        if (!result) {
+          res.send({ error: "Couldn't create poll options!" });
+          return;
+        }
+
+        const { email } = result;
+        const shareLink = `/poll/${id}`;
 
         // Trigger email to poll creator
         const emailData = {
-          from: "Sneha Mahajan <sneh.km@gmail.com>",
-          to: pollCreator,
-          subject: `DecisionMaker - You created a new poll ${shareID}!!`,
-          text: `Share this poll with your friends! Link: ${shareLink}
-                 Your administrator link: ${adminLink}`,
+          from: "Strawpoll <hello@strawpoll.com>",
+          to: email,
+          subject: `DecisionMaker - You created a new poll and id is ${id}!!`,
+          text: `Share this poll with your friends! Link: ${shareLink}`,
         };
         sendEmail(emailData);
         res.redirect(shareLink);
@@ -77,43 +111,21 @@ module.exports = (router) => {
       .catch((e) => res.send(e));
   });
 
-  // Get poll data and display on vote page.
-  // Result object from dB will have "poll question" and "options"
-  // to render
-  router.get("/poll/:shareID", (req, res) => {
-    const shareID = req.params.shareID;
+  // Show a poll and options
+  router.get("/poll/:id", (req, res) => {
+    const { id } = req.params;
 
     database
-      .showPoll(shareID)
-      .then((result) => res.render("vote", result))
-      .catch((e) => {
-        console.error(e);
-        res.send(e);
-      });
-  });
-
-  // Post poll data and display results page
-  // Result object from dB will have "poll question", "legend" &
-  // data for pie chart.
-  router.post("/poll/:shareID", (req, res) => {
-    const shareID = req.params.shareID;
-    const pollAnswers = req.body;
-
-    database
-    // How do we capture the votes for all 4 options in this query?
-      .voteOnPoll(shareID, pollAnswers)
+      .showPoll(id)
       .then((result) => {
-        const pollCreator = result.email;
-
-        // Trigger email to poll creator
-        const emailData = {
-          from: "Sneha Mahajan <sneh.km@gmail.com>",
-          to: pollCreator,
-          subject: `Someone voted on your poll ${shareID}!!`,
-          text: `Someone voted on your poll ${shareID}!!`,
+        const message = {
+          question: result.question,
+          option0: result.option0,
+          option1: result.option1,
+          option2: result.option2,
+          option3: result.option3,
         };
-        sendEmail(emailData);
-        res.render("result", result);
+        res.render("vote", message);
       })
       .catch((e) => {
         console.error(e);
@@ -121,22 +133,60 @@ module.exports = (router) => {
       });
   });
 
-  // Get results of a poll and display results page
-  // Result object from dB will have "poll question", "legend" &
-  // data for pie chart.
-  router.get("/poll/:shareID/results", (req, res) => {
-    const shareID = req.params.shareID;
+  // Vote on a poll
+  router.post("/poll/:id", (req, res) => {
+    const { id } = req.params;
+    const pollVotes = req.body; // ---- get as array of order from frontend via AJAX
+
+    if (!pollVotes) {
+      res.status(403).render("index", ["No poll votes received!"]);
+      return;
+    }
 
     database
-      .getAllVotes(shareID)
-      .then((result) => res.render("result", result))
+      .voteOnPoll(id, pollVotes)
+      .then((result) => {
+        const email = result.email;
+
+        // Trigger email to poll creator
+        const emailData = {
+          from: "Strawpoll <hello@strawpoll.com>",
+          to: email,
+          subject: `Someone voted on your poll ${id}!!`,
+          text: `Someone voted on your poll ${id}!!`,
+        };
+        sendEmail(emailData);
+        res.redirect(`/poll/${id}/results`);
+      })
       .catch((e) => {
         console.error(e);
         res.send(e);
       });
   });
 
-  // Helper funciton to generate random ID for links
+  // Show results of a poll
+  router.get("/poll/:id/results", (req, res) => {
+    const { id } = req.params;
+
+    database
+      .getAllVotes(id)
+      .then((result) => {
+        const message = [
+          result.question,
+          result.countOption0,
+          result.countOption1,
+          result.countOption2,
+          result.countOption3,
+        ];
+        res.render("result", message);
+      })
+      .catch((e) => {
+        console.error(e);
+        res.send(e);
+      });
+  });
+
+  // Helper function to generate random ID for links
   const generateUniqueId = () => {
     let id = "";
     let strLen = 6;
