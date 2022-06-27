@@ -23,7 +23,7 @@ module.exports = (router) => {
     res.render("index");
   });
 
-  // Redirections to /poll
+  // Redirections to /poll or homepage
   router.get("/", (req, res) => {
     res.redirect("/poll");
   });
@@ -54,7 +54,7 @@ module.exports = (router) => {
       .catch((e) => res.send(e));
   });
 
-  // Display poll question and accept options.
+  // Display poll question for new poll
   router.get("/poll/:id/options", (req, res) => {
     const { id } = req.body;
 
@@ -77,7 +77,7 @@ module.exports = (router) => {
       .catch((e) => res.send(e));
   });
 
-  // Create poll options
+  // Accept options for new poll
   router.post("/poll/:id/options", (req, res) => {
     const { option0, option1, option2, option3 } = req.body;
     const { id } = req.params;
@@ -110,9 +110,7 @@ module.exports = (router) => {
       .catch((e) => res.send(e));
   });
 
-  // Get poll data and display on vote page.
-  // Result object from dB will have "poll question" and "options"
-  // to render
+  // Show a poll
   router.get("/poll/:id", (req, res) => {
     const { id } = req.params;
 
@@ -134,7 +132,7 @@ module.exports = (router) => {
       });
   });
 
-  // Post poll votes and display results page after successful
+  // Vote on a poll
   router.post("/poll/:id", (req, res) => {
     const { id } = req.params;
     const pollVotes = req.body; // ---- get as array of order from frontend via AJAX
@@ -165,9 +163,7 @@ module.exports = (router) => {
       });
   });
 
-  // Get results of a poll and display results page
-  // Result object from dB will have "poll question", "legend" &
-  // data for pie chart.
+  // Show results of a poll
   router.get("/poll/:id/results", (req, res) => {
     const { id } = req.params;
 
@@ -189,7 +185,7 @@ module.exports = (router) => {
       });
   });
 
-  // Helper funciton to generate random ID for links
+  // Helper function to generate random ID for links
   const generateUniqueId = () => {
     let id = "";
     let strLen = 6;
