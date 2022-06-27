@@ -71,9 +71,9 @@ module.exports = (router) => {
           res.send({ error: "Couldn't get question!!" });
           return;
         }
-        const message = [ id, poll.question ];
+        const templateVars = [ id, poll.question ];
 
-        res.render("options", message);
+        res.render("options", templateVars);
       })
       .catch((e) => res.send(e));
   });
@@ -118,14 +118,14 @@ module.exports = (router) => {
     database
       .showPoll(id)
       .then((result) => {
-        const message = {
+        const templateVars = {
           question: result.question,
           option0: result.option0,
           option1: result.option1,
           option2: result.option2,
           option3: result.option3,
         };
-        res.render("vote", message);
+        res.render("vote", templateVars);
       })
       .catch((e) => {
         console.error(e);
@@ -171,14 +171,14 @@ module.exports = (router) => {
     database
       .getAllVotes(id)
       .then((result) => {
-        const message = [
+        const templateVars = [
           result.question,
           result.countOption0,
           result.countOption1,
           result.countOption2,
           result.countOption3,
         ];
-        res.render("result", message);
+        res.render("result", templateVars);
       })
       .catch((e) => {
         console.error(e);
