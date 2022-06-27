@@ -48,7 +48,8 @@ module.exports = (router) => {
           res.send({ error: "Couldn't create poll!" });
           return;
         }
-        res.redirect("/poll/:id/options");
+        const id = poll.id;
+        res.redirect(`/poll/${id}/options`);
       })
       .catch((e) => res.send(e));
   });
@@ -69,6 +70,9 @@ module.exports = (router) => {
           res.send({ error: "Couldn't get question!!" });
           return;
         }
+        const message = [ poll.question ];
+
+        res.render("options", message);
       })
       .catch((e) => res.send(e));
   });
@@ -90,13 +94,13 @@ module.exports = (router) => {
           return;
         }
 
-        const { pollCreatorEmail } = result;
+        const { email } = result;
         const shareLink = `/poll/${id}`;
 
         // Trigger email to poll creator
         const emailData = {
           from: "Strawpoll <hello@strawpoll.com>",
-          to: pollCreatorEmail,
+          to: email,
           subject: `DecisionMaker - You created a new poll and id is ${id}!!`,
           text: `Share this poll with your friends! Link: ${shareLink}`,
         };
@@ -130,27 +134,30 @@ module.exports = (router) => {
       });
   });
 
-  // Post poll data and display results page
-  // Result object from dB will have "poll question", "legend" &
-  // data for pie chart.
+  // Post poll votes and display results page after successful
   router.post("/poll/:id", (req, res) => {
     const { id } = req.params;
-    const pollVotes = req.body; // ---- get from frontend via AJAX
+    const pollVotes = req.body; // ---- get as array of order from frontend via AJAX
+
+    if (!pollVotes) {
+      res.status(403).render("index", ["No poll votes received!"]);
+      return;
+    }
 
     database
       .voteOnPoll(id, pollVotes)
       .then((result) => {
-        const pollCreator = result.email;
+        const email = result.email;
 
         // Trigger email to poll creator
         const emailData = {
-          from: "Sneha Mahajan <sneh.km@gmail.com>",
-          to: pollCreator,
+          from: "Strawpoll <hello@strawpoll.com>",
+          to: email,
           subject: `Someone voted on your poll ${id}!!`,
           text: `Someone voted on your poll ${id}!!`,
         };
         sendEmail(emailData);
-        res.render("result", result);
+        res.redirect(`/poll/${id}/results`);
       })
       .catch((e) => {
         console.error(e);
@@ -161,12 +168,21 @@ module.exports = (router) => {
   // Get results of a poll and display results page
   // Result object from dB will have "poll question", "legend" &
   // data for pie chart.
-  router.get("/poll/:shareID/results", (req, res) => {
-    const shareID = req.params.shareID;
+  router.get("/poll/:id/results", (req, res) => {
+    const { id } = req.params;
 
     database
-      .getAllVotes(shareID)
-      .then((result) => res.render("result", result))
+      .getAllVotes(id)
+      .then((result) => {
+        const message = [
+          result.question,
+          result.countOption0,
+          result.countOption1,
+          result.countOption2,
+          result.countOption3,
+        ];
+        res.render("result", message);
+      })
       .catch((e) => {
         console.error(e);
         res.send(e);
