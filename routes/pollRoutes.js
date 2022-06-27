@@ -32,44 +32,73 @@ module.exports = (router) => {
     res.redirect("/poll");
   });
 
-  // Submit new poll data and links created.
-  // Poll data includes question and options.
-  // Links contain new links.
+  // Create new poll
   router.post("/poll", (req, res) => {
-    console.log("inside /poll");
-    const {
-      email,
-      questionText,
-      endDate
-    } = req.body;
+    const { email, questionText } = req.body;
 
-    const shareID = generateUniqueId();
-    const adminID = generateUniqueId();
-    const ids = {
-      shareID,
-      adminID,
-    };
-    // return;
-    database.createPoll(email, adminID, shareID, questionText, endDate).then((poll) => {
-      console.log("In Create Poll");
+    if (!email) {
+      res.status(403).render("index", ["Invalid data"]);
+      return;
+    }
+
+    database
+      .createPoll(email, questionText)
+      .then((poll) => {
         if (!poll) {
-          res.send({ error: "error" });
+          res.send({ error: "Couldn't create poll!" });
           return;
         }
-        const pollCreator = poll.email;
-        const shareID = poll.shareID;
-        const shareLink = `/poll:${shareID}`;
+        res.redirect("/poll/:id/options");
+      })
+      .catch((e) => res.send(e));
+  });
 
-        const adminID = poll.adminID;
-        const adminLink = `/poll:${adminID}`;
+  // Display poll question and accept options.
+  router.get("/poll/:id/options", (req, res) => {
+    const { id } = req.body;
+
+    if (!id) {
+      res.status(403).render("index", ["Invalid data"]);
+      return;
+    }
+
+    database
+      .getPollQuestion(id)
+      .then((poll) => {
+        if (!poll) {
+          res.send({ error: "Couldn't get question!!" });
+          return;
+        }
+      })
+      .catch((e) => res.send(e));
+  });
+
+  // Create poll options
+  router.post("/poll/:id/options", (req, res) => {
+    const { option0, option1, option2, option3 } = req.body;
+    const { id } = req.params;
+    if (!option0 || !option1 || !option2 || !option3) {
+      res.status(403).render("index", ["Invalid data"]);
+      return;
+    }
+
+    database
+      .createOptions(id, option0, option1, option2, option3)
+      .then((result) => {
+        if (!result) {
+          res.send({ error: "Couldn't create poll options!" });
+          return;
+        }
+
+        const { pollCreatorEmail } = result;
+        const shareLink = `/poll/${id}`;
 
         // Trigger email to poll creator
         const emailData = {
-          from: "Sneha Mahajan <sneh.km@gmail.com>",
-          to: pollCreator,
-          subject: `DecisionMaker - You created a new poll ${shareID}!!`,
-          text: `Share this poll with your friends! Link: ${shareLink}
-                 Your administrator link: ${adminLink}`,
+          from: "Strawpoll <hello@strawpoll.com>",
+          to: pollCreatorEmail,
+          subject: `DecisionMaker - You created a new poll and id is ${id}!!`,
+          text: `Share this poll with your friends! Link: ${shareLink}`,
         };
         sendEmail(emailData);
         res.redirect(shareLink);
@@ -80,12 +109,21 @@ module.exports = (router) => {
   // Get poll data and display on vote page.
   // Result object from dB will have "poll question" and "options"
   // to render
-  router.get("/poll/:shareID", (req, res) => {
-    const shareID = req.params.shareID;
+  router.get("/poll/:id", (req, res) => {
+    const { id } = req.params;
 
     database
-      .showPoll(shareID)
-      .then((result) => res.render("vote", result))
+      .showPoll(id)
+      .then((result) => {
+        const message = {
+          question: result.question,
+          option0: result.option0,
+          option1: result.option1,
+          option2: result.option2,
+          option3: result.option3,
+        };
+        res.render("vote", message);
+      })
       .catch((e) => {
         console.error(e);
         res.send(e);
@@ -95,13 +133,12 @@ module.exports = (router) => {
   // Post poll data and display results page
   // Result object from dB will have "poll question", "legend" &
   // data for pie chart.
-  router.post("/poll/:shareID", (req, res) => {
-    const shareID = req.params.shareID;
-    const pollAnswers = req.body;
+  router.post("/poll/:id", (req, res) => {
+    const { id } = req.params;
+    const pollVotes = req.body; // ---- get from frontend via AJAX
 
     database
-    // How do we capture the votes for all 4 options in this query?
-      .voteOnPoll(shareID, pollAnswers)
+      .voteOnPoll(id, pollVotes)
       .then((result) => {
         const pollCreator = result.email;
 
@@ -109,8 +146,8 @@ module.exports = (router) => {
         const emailData = {
           from: "Sneha Mahajan <sneh.km@gmail.com>",
           to: pollCreator,
-          subject: `Someone voted on your poll ${shareID}!!`,
-          text: `Someone voted on your poll ${shareID}!!`,
+          subject: `Someone voted on your poll ${id}!!`,
+          text: `Someone voted on your poll ${id}!!`,
         };
         sendEmail(emailData);
         res.render("result", result);
