@@ -36,12 +36,11 @@ AND user_email = $2
 GROUP BY options.option_text
 ORDER BY count;
 
-
-
-SELECT count(vote_1) as vote_count, options.option_text as vote
+--get all votes -> lowest SUM = winner of vote
+SELECT SUM(vote_1) as opt1, SUM(vote_2) as opt2, SUM(vote_3) as opt3, SUM(vote_4) as opt4
 FROM votes
 JOIN options ON vote_1 = options.id
-WHERE votes.poll_id = 1
-GROUP BY options.option_text
-ORDER BY count;
+WHERE votes.poll_id = 1;
+
+
 
