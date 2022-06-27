@@ -17,6 +17,113 @@ const mg = mailgun({
 // Database
 const database = require("../lib/db");
 
+const testDataPoll = {
+  0: {
+    question: "Eat where?",
+    email: "sneh.km@gmail.com",
+    id: 0
+  },
+  1: {
+    question: "Go where?",
+    email: "bob@bob.com",
+    id: 1
+  },
+  2: {
+    question: "Do what?",
+    email: "bill@bill.com",
+    id: 2
+  },
+}
+
+const options = {
+  0: {
+    option0: "McDonalds",
+    option1: "Thai",
+    option2: "Home",
+    option3: "Out - doesn't matter where",
+    pollId: 0
+  },
+  1: {
+    option0: "Hiking",
+    option1: "Skiing",
+    option2: "Running",
+    option3: "Jumping",
+    pollId: 1
+  },
+  2: {
+    option0: "Paint",
+    option1: "Knit",
+    option2: "Make coffee",
+    option3: "Dance",
+    pollId: 2
+  },
+}
+
+const votes = {
+  0: {
+    1: "Knit",
+    2: "Paint",
+    3: "Make coffee",
+    4: "Dance",
+    pollId: 0
+  },
+  1: {
+    1: "Dance",
+    2: "Knit",
+    3: "Make coffee",
+    4: "Dance",
+    pollId: 0
+  },
+  2: {
+    1: "Paint",
+    2: "Knit",
+    3: "Make coffee",
+    4: "Dance",
+    pollId: 0
+  },
+  3: {
+    1: "Hiking",
+    2: "Running",
+    3: "Skiing",
+    4: "Jumping",
+    pollId: 1
+  },
+  4: {
+    1: "Hiking",
+    2: "Running",
+    3: "Skiing",
+    4: "Jumping",
+    pollId: 1
+  },
+  5: {
+    1: "Hiking",
+    2: "Running",
+    3: "Skiing",
+    4: "Jumping",
+    pollId: 1
+  },
+  6: {
+    1: "Paint",
+    2: "Knit",
+    3: "Make coffee",
+    4: "Dance",
+    pollId: 2
+  },
+  7: {
+    1: "Paint",
+    2: "Knit",
+    3: "Make coffee",
+    4: "Dance",
+    pollId: 2
+  },
+  8: {
+    1: "Paint",
+    2: "Knit",
+    3: "Make coffee",
+    4: "Dance",
+    pollId: 2
+  },
+}
 module.exports = (router) => {
   // Home page to begin the poll creation
   router.get("/poll", (req, res) => {
@@ -34,16 +141,22 @@ module.exports = (router) => {
 
   // Create new poll
   router.post("/poll", (req, res) => {
-    const { email, questionText } = req.body;
+    const { email, question } = req.body;
 
-    if (!email || !questionText) {
+    if (email === "" || question === "") {
       const message = ["Invalid data. Please enter the email address and a question!"];
       res.status(400).render("index", message);
       return;
     }
+    // temp code
+    const idTemp = cp(email, question);
+    console.log(idTemp, testDataPoll[idTemp]);
+    res.redirect(`/poll/${idTemp}/options`);
+    return;
+    // temp code
 
     database
-      .createPoll(email, questionText)
+      .createPoll(email, question)
       .then((poll) => {
         if (!poll) {
           res.send({ error: "Couldn't create poll!" });
@@ -64,6 +177,13 @@ module.exports = (router) => {
       return;
     }
 
+    // temp code
+    const question = getQ(id);
+    const templateVars = [ id, question ];
+    res.render("options", templateVars);
+    return;
+    // temp code
+
     database
       .getPollQuestion(id)
       .then((poll) => {
@@ -82,10 +202,17 @@ module.exports = (router) => {
   router.post("/poll/:id/options", (req, res) => {
     const { option0, option1, option2, option3 } = req.body;
     const { id } = req.params;
-    if (!option0 || !option1 || !option2 || !option3) {
+    if (option0 === "" || option1 === "" || option2 === "" || option3 === "") {
       res.status(400).render("index", ["Invalid data"]);
       return;
     }
+
+    // temp code
+    addOptions(id, option0, option1, option2, option3);
+    const shareLink = `/poll/${id}`;
+    res.redirect(shareLink);
+    return;
+    // temp code
 
     database
       .createOptions(id, option0, option1, option2, option3)
@@ -219,6 +346,34 @@ module.exports = (router) => {
     });
     return;
   };
+
+  // Helper function to create dummy poll in object
+
+  const cp = (email, question) => {
+    const pollIDs = Object.keys(testDataPoll);
+    const id = pollIDs.length;
+    testDataPoll[id] = {
+      email,
+      question
+    }
+    return id;
+  }
+
+  const getQ = (id) => {
+    const poll = testDataPoll[id];
+    const question = poll.question;
+    return question
+  }
+
+  const addOptions = (id, option0, option1, option2, option3,) => {
+    options[id] = {
+      option0,
+      option1,
+      option2,
+      option3,
+      pollId: id
+    }
+  }
 
   return router;
 };
