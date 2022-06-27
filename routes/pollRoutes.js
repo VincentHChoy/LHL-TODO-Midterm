@@ -36,8 +36,9 @@ module.exports = (router) => {
   router.post("/poll", (req, res) => {
     const { email, questionText } = req.body;
 
-    if (!email) {
-      res.status(403).render("index", ["Invalid data"]);
+    if (!email || !questionText) {
+      const message = ["Invalid data. Please enter the email address and a question!"];
+      res.status(403).render("index", message);
       return;
     }
 
@@ -56,7 +57,7 @@ module.exports = (router) => {
 
   // Display poll question for new poll
   router.get("/poll/:id/options", (req, res) => {
-    const { id } = req.body;
+    const { id } = req.params;
 
     if (!id) {
       res.status(403).render("index", ["Invalid data"]);
@@ -110,7 +111,7 @@ module.exports = (router) => {
       .catch((e) => res.send(e));
   });
 
-  // Show a poll
+  // Show a poll and options
   router.get("/poll/:id", (req, res) => {
     const { id } = req.params;
 
