@@ -25,19 +25,19 @@
   <main class="text-center">
     <h1>Straw Poll</h1>
 
-    <form id="poll-options" action="/poll" method="">
+    <form id="poll-options" action="/poll" method="POST">
       <input
         class="text-center"
         id="question"
         type="text"
-        name=""
+        name="question"
         placeholder="type your question here"
         style="width: 300px; margin: 1em">
       <%-include('partials/_forms') %>
 
       <br>
 
-      <button type="button" id="submit-poll" class="btn btn-primary">
+      <button type="submit" id="submit-poll" class="btn btn-primary">
         Submit
       </button>
     </form>
