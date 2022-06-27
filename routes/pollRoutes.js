@@ -38,7 +38,7 @@ module.exports = (router) => {
 
     if (!email || !questionText) {
       const message = ["Invalid data. Please enter the email address and a question!"];
-      res.status(403).render("index", message);
+      res.status(400).render("index", message);
       return;
     }
 
@@ -60,7 +60,7 @@ module.exports = (router) => {
     const { id } = req.params;
 
     if (!id) {
-      res.status(403).render("index", ["Invalid data"]);
+      res.status(400).render("index", ["Invalid data"]);
       return;
     }
 
@@ -71,7 +71,7 @@ module.exports = (router) => {
           res.send({ error: "Couldn't get question!!" });
           return;
         }
-        const message = [ poll.question ];
+        const message = [ id, poll.question ];
 
         res.render("options", message);
       })
@@ -83,7 +83,7 @@ module.exports = (router) => {
     const { option0, option1, option2, option3 } = req.body;
     const { id } = req.params;
     if (!option0 || !option1 || !option2 || !option3) {
-      res.status(403).render("index", ["Invalid data"]);
+      res.status(400).render("index", ["Invalid data"]);
       return;
     }
 
@@ -139,7 +139,7 @@ module.exports = (router) => {
     const pollVotes = req.body; // ---- get as array of order from frontend via AJAX
 
     if (!pollVotes) {
-      res.status(403).render("index", ["No poll votes received!"]);
+      res.status(400).render("index", ["No poll votes received!"]);
       return;
     }
 
