@@ -9,10 +9,10 @@
 require("dotenv").config();
 const mailgun = require("mailgun-js");
 const DOMAIN = process.env.MAILGUN_DOMAIN;
-const mg = mailgun({
-  apiKey: process.env.API_KEY_MAILGUN,
-  domain: DOMAIN,
-});
+// const mg = mailgun({
+//   apiKey: process.env.API_KEY_MAILGUN,
+//   domain: DOMAIN,
+// });
 
 // Database
 const database = require("../lib/db");
@@ -20,12 +20,12 @@ const database = require("../lib/db");
 module.exports = (router) => {
   // Home page to begin the poll creation
   router.get("/poll", (req, res) => {
-    res.render("index");
+    res.render("options");
   });
 
   // Redirections to /poll or homepage
   router.get("/", (req, res) => {
-    res.redirect("/poll");
+    res.redirect(`/poll/:id/options`);
   });
 
   router.get("/home", (req, res) => {
@@ -37,7 +37,9 @@ module.exports = (router) => {
     const { email, questionText } = req.body;
 
     if (!email || !questionText) {
-      const message = ["Invalid data. Please enter the email address and a question!"];
+      const message = [
+        "Invalid data. Please enter the email address and a question!",
+      ];
       res.status(403).render("index", message);
       return;
     }
@@ -53,6 +55,7 @@ module.exports = (router) => {
         res.redirect(`/poll/${id}/options`);
       })
       .catch((e) => res.send(e));
+    res.redirect(`/poll/${id}/options`);
   });
 
   // Display poll question for new poll
@@ -71,11 +74,12 @@ module.exports = (router) => {
           res.send({ error: "Couldn't get question!!" });
           return;
         }
-        const message = [ poll.question ];
+        const message = [poll.question]; // needs to be an object rather not an Array
 
         res.render("options", message);
       })
       .catch((e) => res.send(e));
+
   });
 
   // Accept options for new poll
