@@ -13,9 +13,11 @@ const mg = mailgun({
   apiKey: process.env.API_KEY_MAILGUN,
   domain: DOMAIN,
 });
-//
 
-module.exports = (router, database) => {
+// Database
+const database = require("../lib/db");
+
+module.exports = (router) => {
   // Home page to begin the poll creation
   router.get("/poll", (req, res) => {
     res.render("index");
@@ -47,8 +49,9 @@ module.exports = (router, database) => {
       shareID,
       adminID,
     };
-
+    // return;
     database.createPoll(email, adminID, shareID, questionText, endDate).then((poll) => {
+      console.log("In Create Poll");
         if (!poll) {
           res.send({ error: "error" });
           return;
