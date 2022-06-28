@@ -21,19 +21,19 @@ const testDataPoll = {
   0: {
     question: "Eat where?",
     email: "sneh.km@gmail.com",
-    id: 0
+    id: 0,
   },
   1: {
     question: "Go where?",
     email: "bob@bob.com",
-    id: 1
+    id: 1,
   },
   2: {
     question: "Do what?",
     email: "bill@bill.com",
-    id: 2
+    id: 2,
   },
-}
+};
 
 const options = {
   0: {
@@ -41,23 +41,23 @@ const options = {
     option1: "Thai",
     option2: "Home",
     option3: "Out - doesn't matter where",
-    pollId: 0
+    pollId: 0,
   },
   1: {
     option0: "Hiking",
     option1: "Skiing",
     option2: "Running",
     option3: "Jumping",
-    pollId: 1
+    pollId: 1,
   },
   2: {
     option0: "Paint",
     option1: "Knit",
     option2: "Make coffee",
     option3: "Dance",
-    pollId: 2
+    pollId: 2,
   },
-}
+};
 
 const votes = {
   0: {
@@ -65,65 +65,65 @@ const votes = {
     2: "Paint",
     3: "Make coffee",
     4: "Dance",
-    pollId: 0
+    pollId: 0,
   },
   1: {
     1: "Dance",
     2: "Knit",
     3: "Make coffee",
     4: "Dance",
-    pollId: 0
+    pollId: 0,
   },
   2: {
     1: "Paint",
     2: "Knit",
     3: "Make coffee",
     4: "Dance",
-    pollId: 0
+    pollId: 0,
   },
   3: {
     1: "Hiking",
     2: "Running",
     3: "Skiing",
     4: "Jumping",
-    pollId: 1
+    pollId: 1,
   },
   4: {
     1: "Hiking",
     2: "Running",
     3: "Skiing",
     4: "Jumping",
-    pollId: 1
+    pollId: 1,
   },
   5: {
     1: "Hiking",
     2: "Running",
     3: "Skiing",
     4: "Jumping",
-    pollId: 1
+    pollId: 1,
   },
   6: {
     1: "Paint",
     2: "Knit",
     3: "Make coffee",
     4: "Dance",
-    pollId: 2
+    pollId: 2,
   },
   7: {
     1: "Paint",
     2: "Knit",
     3: "Make coffee",
     4: "Dance",
-    pollId: 2
+    pollId: 2,
   },
   8: {
     1: "Paint",
     2: "Knit",
     3: "Make coffee",
     4: "Dance",
-    pollId: 2
+    pollId: 2,
   },
-}
+};
 module.exports = (router) => {
   // Home page to begin the poll creation
   router.get("/poll", (req, res) => {
@@ -144,7 +144,9 @@ module.exports = (router) => {
     const { email, question } = req.body;
 
     if (email === "" || question === "") {
-      const message = ["Invalid data. Please enter the email address and a question!"];
+      const message = {
+        text: "Invalid data. Please enter the email address and a question!",
+      };
       res.status(400).render("index", message);
       return;
     }
@@ -178,8 +180,8 @@ module.exports = (router) => {
     }
 
     // temp code
-    const question = getQ(id);
-    const templateVars = [ id, question ];
+    const question = getPollQ(id);
+    const templateVars = { id, question };
     res.render("options", templateVars);
     return;
     // temp code
@@ -191,7 +193,7 @@ module.exports = (router) => {
           res.send({ error: "Couldn't get question!!" });
           return;
         }
-        const templateVars = [ id, poll.question ];
+        const templateVars = [id, poll.question];
 
         res.render("options", templateVars);
       })
@@ -210,6 +212,12 @@ module.exports = (router) => {
     // temp code
     addOptions(id, option0, option1, option2, option3);
     const shareLink = `/poll/${id}`;
+    console.log(
+      "Link for poll to share",
+      shareLink,
+      "Options-full object",
+      options
+    );
     res.redirect(shareLink);
     return;
     // temp code
@@ -241,6 +249,13 @@ module.exports = (router) => {
   // Show a poll and options
   router.get("/poll/:id", (req, res) => {
     const { id } = req.params;
+
+    // temp code
+    const templateVars = getPData(id);
+    console.log(`Poll data for id: ${id}`, templateVars);
+    res.render("vote", templateVars);
+    return;
+    // temp code
 
     database
       .showPoll(id)
@@ -347,33 +362,69 @@ module.exports = (router) => {
     return;
   };
 
-  // Helper function to create dummy poll in object
+  // Helper function to create junk poll data in object
 
   const cp = (email, question) => {
     const pollIDs = Object.keys(testDataPoll);
     const id = pollIDs.length;
     testDataPoll[id] = {
       email,
-      question
-    }
+      question,
+    };
     return id;
-  }
+  };
 
-  const getQ = (id) => {
+  const getPollQ = (id) => {
     const poll = testDataPoll[id];
     const question = poll.question;
-    return question
-  }
+    return question;
+  };
 
-  const addOptions = (id, option0, option1, option2, option3,) => {
+  const addOptions = (id, option0, option1, option2, option3) => {
     options[id] = {
       option0,
       option1,
       option2,
       option3,
-      pollId: id
+      pollId: id,
+    };
+  };
+
+  const getPData = (id) => {
+    const poll = testDataPoll[id];
+    const question = poll.question;
+    const { option0, option1, option2, option3 } = options[id];
+
+    const pollData = {
+      question,
+      options: [option0, option1, option2, option3],
+    };
+
+    return pollData;
+  };
+
+  const getPollR = (id) => {
+    const result = {};
+    for (const v in votes) {
+      const vote = votes[v];
+
+      if (vote.pollId === id) {
+        for (const key in vote) {
+          if (key.length === 1) {
+            const value = parseInt(key);
+            const option = vote[key];
+            if (result[option]) {
+              result[option] += value;
+            } else {
+              result[option] = 0;
+              result[option] = value;
+            }
+          }
+        }
+      }
     }
-  }
+    return result;
+  };
 
   return router;
 };
