@@ -25,12 +25,14 @@ CREATE TABLE options (
   id SERIAL PRIMARY KEY NOT NULL,
   owner_email VARCHAR(255),
   poll_id INTEGER REFERENCES polls(id),
-  option_text VARCHAR(255) 
+  option_text VARCHAR(255),
+  description_text VARCHAR(255) 
 );
 
 CREATE TABLE votes (
   id SERIAL PRIMARY KEY NOT NULL,
   user_email VARCHAR(255),
+  user_name VARCHAR(255),
   poll_id INTEGER REFERENCES polls(id) ON DELETE CASCADE,
   vote_1 INTEGER REFERENCES options(id) ON DELETE CASCADE,
   vote_2 INTEGER REFERENCES options(id) ON DELETE CASCADE,
