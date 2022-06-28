@@ -25,7 +25,7 @@
   <main class="text-center">
     <h1>Straw Poll</h1>
 
-    <form id="poll-options" action="/poll" method="POST">
+    <form id="poll-options" action="/poll/<%=id%>/options" method="POST">
       <%-include('partials/_forms') %>
 
       <br>
