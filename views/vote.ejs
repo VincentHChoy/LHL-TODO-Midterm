@@ -22,35 +22,38 @@
       crossorigin="anonymous"
     ></script>
 
-
-  <title>Decision Maker</title>
+    <title>Decision Maker</title>
   </head>
   <body>
     <main class="text-center">
       <h1 class="text-color">Straw Poll</h1>
+      <p><%= question %></p>
       <div>
         <ul id="ranking" class="sortable">
           <%-include('partials/_vote-container') %>
         </ul>
       </div>
-      <div class="flex-column">
-        <div class="mr-auto p-2">
-          <!--  should route to the results page -->
-          <form action="/poll/:shareID/results" method="GET"></form>
-            <button type="button" id="results-button" class="btn btn-success">
-            Results
+      <div class="flex-column text-center">
+        <div
+        class="button-container">
+          <form
+           action="/poll/<%= id %>/results"
+           method="GET">
+
+            <button type="submit" id="results-button" class="btn btn-success">
+              Results
             </button>
           </form>
-          <button type="button" id="copy-button" class="btn btn-warning">
+
+
+          <button type="submit" id="copy-button" class="btn btn-warning">
             Share
           </button>
 
+          <form id="submit-ranking" poll-id="<%= id %>">
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
         </div>
-      <form id="submit-ranking">
-        <button type="submit" class="btn btn-primary">
-          Submit
-        </button>
-      </form>
       </div>
     </main>
   </body>
