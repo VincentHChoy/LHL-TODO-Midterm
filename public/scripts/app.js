@@ -61,11 +61,6 @@ $(document).ready(function () {
     };
   };
 
-  const myChart = new Chart(
-    document.getElementById("myChart"),
-    chartOptions(dummyData, "pie")
-  );
-
   //copy to clipboard
 
   const copyToClipboard = function () {
@@ -89,11 +84,14 @@ $(document).ready(function () {
     return output;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = function (event) {
+    event.preventDefault();
+    const id = $(this).attr("poll-id");
+
     $.ajax({
-      url: `http://localhost:8080/poll/:id`, // `http://localhost:/poll/:id/options`
+      url: `http://localhost:8080/poll/${id}`, // `http://localhost:/poll/:id/options`
       method: "POST",
-      data: getListvalues(),
+      data: { votes: getListvalues() },
     })
       .then((data) => {
         console.log(data);
@@ -109,15 +107,29 @@ $(document).ready(function () {
 
   $("#submit-ranking").click(handleSubmit);
 
-  const getPollOptions = function () {
-    $("#poll-options input").each(function () {
-      console.log(this.value);
-      // output.push(this.id);
+  const handleResults = function (event) {
+    // event.preventDefault();
+    const id = $("#myChart").data("poll-id");
 
-      //targets value within list
-      //  console.log($(this).text());
-    });
+    $.ajax({
+      url: `http://localhost:8080/api/poll/${id}/results`, // `http://localhost:/poll/:id/options`
+      method: "GET",
+    })
+      .then((data) => {
+        console.log(data);
+        const myChart = new Chart(
+          document.getElementById("myChart"),
+          chartOptions(data.options, "pie")
+        );
+      })
+      .catch((error) => {
+        console.log(error);
+
+        if (error.status === 404) {
+          console.log("error");
+        }
+      });
   };
-
-  // $("#submit-poll").click(getPollOptions);
+  console.log("hello world");
+  handleResults();
 });

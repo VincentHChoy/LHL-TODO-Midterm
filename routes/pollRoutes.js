@@ -9,10 +9,10 @@
 require("dotenv").config();
 const mailgun = require("mailgun-js");
 const DOMAIN = process.env.MAILGUN_DOMAIN;
-const mg = mailgun({
-  apiKey: process.env.API_KEY_MAILGUN,
-  domain: DOMAIN,
-});
+// const mg = mailgun({
+//   apiKey: process.env.API_KEY_MAILGUN,
+//   domain: DOMAIN,
+// });
 
 // Database
 const database = require("../lib/db");
@@ -278,15 +278,16 @@ module.exports = (router) => {
   // Vote on a poll
   router.post("/poll/:id", (req, res) => {
     const { id } = req.params;
-    const pollVotes = req.body; // ---- get as array of order from frontend via AJAX
+    const { votes } = req.body; // ---- get as array of order from frontend via AJAX
 
-    if (!pollVotes) {
+    if (!votes) {
       res.status(400).render("index", ["No poll votes received!"]);
       return;
     }
 
+    res.status(201).send({ message: "poll voted", votes });
     database
-      .voteOnPoll(id, pollVotes)
+      .voteOnPoll(id, votes)
       .then((result) => {
         const email = result.email;
 
@@ -306,26 +307,65 @@ module.exports = (router) => {
       });
   });
 
-  // Show results of a poll
+  // Show results of a poll, gets the id and question
   router.get("/poll/:id/results", (req, res) => {
     const { id } = req.params;
 
-    database
-      .getAllVotes(id)
-      .then((result) => {
-        const templateVars = [
-          result.question,
-          result.countOption0,
-          result.countOption1,
-          result.countOption2,
-          result.countOption3,
-        ];
-        res.render("result", templateVars);
-      })
-      .catch((e) => {
-        console.error(e);
-        res.send(e);
-      });
+    // database
+    //   .getAllVotes(id)
+    //   .then((result) => {
+    //     const templateVars = {
+    //       question: result.question,
+    //       countOption0: result.countOption0,
+    //       countOption1: result.countOption1,
+    //       countOption2: result.countOption2,
+    //       countOption3: result.countOption3,
+    //     };
+    //     res.render("result", templateVars);
+    //   })
+    //   .catch((e) => {
+    //     console.error(e);
+    //     res.send(e);
+    //   });
+
+    const templateVars = {
+      question: "who let the dogs out",
+      id: id,
+    };
+    res.render("results", templateVars);
+  });
+
+  //ajax endpoint to get the poll data.
+  router.get("/api/poll/:id/results", (req, res) => {
+    const { id } = req.params;
+
+    // database
+    //   .getAllVotes(id)
+    //   .then((result) => {
+    //     const templateVars = {
+    //       question: result.question,
+    //       countOption0: result.countOption0,
+    //       countOption1: result.countOption1,
+    //       countOption2: result.countOption2,
+    //       countOption3: result.countOption3,
+    //     };
+    //     res.render("result", templateVars);
+    //   })
+    //   .catch((e) => {
+    //     console.error(e);
+    //     res.send(e);
+    //   });
+
+    const options = [
+      { label: "dog", y: 10 },
+      { label: "cat", y: 15 },
+      { label: "banana", y: 25 },
+      { label: "mango", y: 30 },
+      { label: "grape", y: 28 },
+    ];
+
+    res.json({ options });
+
   });
 
   // Helper function to generate random ID for links
@@ -396,6 +436,7 @@ module.exports = (router) => {
     const { option0, option1, option2, option3 } = options[id];
 
     const pollData = {
+      id,
       question,
       options: [option0, option1, option2, option3],
     };
