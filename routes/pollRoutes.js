@@ -285,6 +285,15 @@ module.exports = (router) => {
       return;
     }
 
+    // temp code
+    const templateVars = {
+
+    }
+    console.log("Data received from votes page:",req.body);
+    // res.redirect(`/poll/${id}/results`);
+    return;
+    // temp code
+
     database
       .voteOnPoll(id, pollVotes)
       .then((result) => {
