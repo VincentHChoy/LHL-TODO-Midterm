@@ -79,7 +79,7 @@ $(document).ready(function () {
   const getListvalues = function () {
     const output = [];
     $("#ranking li").each(function () {
-      console.log(this.id);
+      // console.log(this.id);
       output.push(this.id);
 
       //targets value within list
@@ -89,7 +89,25 @@ $(document).ready(function () {
     return output;
   };
 
-  $("#submit-ranking").click(getListvalues);
+  const handleSubmit = () => {
+    $.ajax({
+      url: `http://localhost:8080/poll/:id`, // `http://localhost:/poll/:id/options`
+      method: "POST",
+      data: getListvalues(),
+    })
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((error) => {
+        console.log(error);
+
+        if (error.status === 404) {
+          console.log("error");
+        }
+      });
+  };
+
+  $("#submit-ranking").click(handleSubmit);
 
   const getPollOptions = function () {
     $("#poll-options input").each(function () {
@@ -101,5 +119,5 @@ $(document).ready(function () {
     });
   };
 
-  $("#submit-poll").click(getPollOptions);
+  // $("#submit-poll").click(getPollOptions);
 });
