@@ -75,13 +75,68 @@ $(document).ready(function () {
     const output = [];
     $("#ranking li").each(function () {
       // console.log(this.id);
-      output.push(this.id);
+      output.push($(this).text());
+    });
+    return output.map((word) =>
+      word.replace(/\r?\n|\r/g, "").replace(/ /g, "")
+    );
+  };
 
-      //targets value within list
-      //  console.log($(this).text());
+  const getInitalValues = function () {
+    const output = {
+      options: [
+        {
+          id: 0,
+          text: "",
+          points: -1,
+        },
+        {
+          id: 1,
+          text: "",
+          points: -1,
+        },
+        {
+          id: 2,
+          text: "",
+          points: -1,
+        },
+        {
+          id: 3,
+          text: "",
+          points: -1,
+        },
+      ],
+    };
+
+    const options = getListvalues();
+
+    let i = 0;
+    for (const object of output.options) {
+      object.text = options[i];
+      i++;
+    }
+    return output;
+  };
+
+  const initalValues = getInitalValues();
+
+  const assignPoints = function (initalValues) {
+    const points = [3, 2, 1, 0];
+    const rankings = []; //[1,3,0,2]
+
+    $("#ranking li").each(function () {
+      rankings.push(parseInt(this.id));
     });
 
-    return output;
+    console.log("this is rankings", rankings);
+
+    for (let i = 0; i < points.length; i++) {
+      let id = rankings.indexOf(initalValues.options[i].id); // find id relation to rankings
+      initalValues.options[i].points = points[id];
+    }
+
+    console.log(initalValues);
+    return initalValues;
   };
 
   const handleSubmit = function (event) {
@@ -91,7 +146,7 @@ $(document).ready(function () {
     $.ajax({
       url: `http://localhost:8080/poll/${id}`, // `http://localhost:/poll/:id/options`
       method: "POST",
-      data: { votes: getListvalues() },
+      data: { votes: assignPoints(initalValues) },
     })
       .then((data) => {
         console.log(data);
