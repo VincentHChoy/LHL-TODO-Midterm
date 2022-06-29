@@ -124,7 +124,10 @@ module.exports = (router) => {
 
                     const { owner_email } = result;
                     const shareLink = `/poll/${id}`;
-                    console.log("\nOptions created, redirecting to this link now:",shareLink);
+                    console.log(
+                      "\nOptions created, redirecting to this link now:",
+                      shareLink
+                    );
 
                     // Trigger email to poll creator
                     const emailData = {
@@ -148,20 +151,20 @@ module.exports = (router) => {
   // Show a poll and options
   router.get("/poll/:id", (req, res) => {
     const { id } = req.params;
-    console.log("\nShowing options for poll id:",id);
+    console.log("\nShowing options for poll id:", id);
     database
       .showPoll(id)
       .then((result) => {
-
+        console.log(result);
         const question = result[0].question_text;
-        const options = result.map((element)=>{
-          return element.option_text;
-        })
+        const options = result.map((element) => {
+          return element.option;
+        });
         console.log(options);
         const templateVars = {
           id,
           question,
-          options
+          options,
         };
         res.render("vote", templateVars);
       })
@@ -175,21 +178,24 @@ module.exports = (router) => {
   router.post("/poll/:id", (req, res) => {
     const { id } = req.params;
     const { votes } = req.body;
-    const { options } = votes; // ---- get as array of order from frontend via AJAX
-    console.log("\nVotes received from user:", options);
+
     if (!votes) {
       res.status(400).render("index", ["No poll votes received!"]);
       return;
     }
 
-    // res.status(201).send({ message: "poll voted", votes });
+    const { options } = votes; // ---- get as array of order from frontend via AJAX
+    console.log("\nVotes received from user:", options);
+    const rank1 = options[0].points;
+    const rank2 = options[1].points;
+    const rank3 = options[2].points;
+    const rank4 = options[3].points;
 
-    return
     database
-      .voteOnPoll(id, votes)
+      .voteOnPoll(id, rank1, rank2, rank3, rank4)
       .then((result) => {
-        const email = result.email;
-
+        // const email = result.email;
+        console.log(result);
         // Trigger email to poll creator
         const emailData = {
           from: "Strawpoll <hello@strawpoll.com>",
@@ -264,7 +270,6 @@ module.exports = (router) => {
     ];
 
     res.json({ options });
-
   });
 
   // Helper function to generate random ID for links
@@ -291,7 +296,6 @@ module.exports = (router) => {
     //   text: 'Testing some Mailgun awesomness!'
     // };
     mg.messages().send(emailData, function (error, body) {
-
       if (!body.id || error) {
         console.log("Email unsuccessful! Use a valid email address.", error);
         return false;
