@@ -99,6 +99,7 @@ module.exports = (router) => {
           res.send({ error: "Couldn't create poll option1!" });
           return;
         }
+        console.log(result);
         database
           .createOptions(id, option1)
           .then((result) => {
