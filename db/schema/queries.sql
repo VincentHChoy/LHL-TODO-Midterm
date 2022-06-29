@@ -2,7 +2,7 @@
 SELECT DISTINCT polls.id, question_text, options.option_text as option, polls.owner_email, created_at, active
 FROM polls
 JOIN options ON polls.id = options.poll_id
-WHERE polls.owner_email = $1;
+WHERE polls.owner_email = 'sebastianguerra@ymail.com';
 
 --vote on poll
 INSERT INTO votes 
@@ -38,7 +38,7 @@ RETURNING *;
 -- ORDER BY count;
 
 --get all votes -> receives points ranking options. order reflects fixed place options
-SELECT SUM(vote_1) as opt1, SUM(vote_2) as opt2, SUM(vote_3) as opt3, SUM(vote_4) as opt4
+SELECT SUM(opt1_rank) as opt1, SUM(opt2_rank) as opt2, SUM(opt3_rank) as opt3, SUM(opt4_rank) as opt4
 FROM votes
 WHERE votes.poll_id = 1;
 
