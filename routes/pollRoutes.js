@@ -173,14 +173,15 @@ module.exports = (router) => {
   // Vote on a poll
   router.post("/poll/:id", (req, res) => {
     const { id } = req.params;
-    const { votes } = req.body; // ---- get as array of order from frontend via AJAX
-    console.log("\nVotes received from user:", req.body);
+    const { votes } = req.body;
+    const { options } = votes; // ---- get as array of order from frontend via AJAX
+    console.log("\nVotes received from user:", options);
     if (!votes) {
       res.status(400).render("index", ["No poll votes received!"]);
       return;
     }
 
-    res.status(201).send({ message: "poll voted", votes });
+    // res.status(201).send({ message: "poll voted", votes });
 
     return
     database
