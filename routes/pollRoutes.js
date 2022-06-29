@@ -220,7 +220,10 @@ module.exports = (router) => {
       .getAllVotes(id)
       .then((result) => {
         console.log(result);
+        const {question} = result;
         const templateVars = {
+          id,
+          question
         };
         res.render("results", templateVars);
       })
