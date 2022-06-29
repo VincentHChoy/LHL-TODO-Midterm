@@ -43,10 +43,10 @@ pollRoutes(pollRouter, db);
 app.use("/", pollRouter);
 
 // Widget routes - create and mount
-// const widgetRouter = express.Router();
-// const widgetsRoutes = require("./routes/widgets");
-// widgetsRoutes(widgetRouter, db);
-// app.use("/api/widgets", widgetRouter);
+const apiRouter = express.Router();
+const apiRoutes = require("./routes/apiRoutes");
+apiRoutes(apiRouter, db);
+app.use("/api", apiRouter);
 
 // Note: mount other resources here, using the same pattern above
 

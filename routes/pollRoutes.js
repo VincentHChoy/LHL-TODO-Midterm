@@ -51,7 +51,7 @@ module.exports = (router) => {
           res.send({ error: "Couldn't create a poll!" });
           return;
         }
-        console.log(poll);
+        console.log("\nThis poll was just created:", poll);
         const id = poll.id;
         res.redirect(`/poll/${id}/options`);
       })
@@ -123,7 +123,7 @@ module.exports = (router) => {
 
                     const { owner_email } = result;
                     const shareLink = `/poll/${id}`;
-                    console.log(result, shareLink);
+                    console.log("\nOptions created, redirecting to this link now:",shareLink);
 
                     // Trigger email to poll creator
                     const emailData = {
@@ -147,7 +147,7 @@ module.exports = (router) => {
   // Show a poll and options
   router.get("/poll/:id", (req, res) => {
     const { id } = req.params;
-    console.log(id);
+    console.log("\nShowing options for poll id:",id);
     database
       .showPoll(id)
       .then((result) => {
@@ -174,13 +174,15 @@ module.exports = (router) => {
   router.post("/poll/:id", (req, res) => {
     const { id } = req.params;
     const { votes } = req.body; // ---- get as array of order from frontend via AJAX
-
+    console.log("\nVotes received from user:", req.body);
     if (!votes) {
       res.status(400).render("index", ["No poll votes received!"]);
       return;
     }
 
     res.status(201).send({ message: "poll voted", votes });
+
+    return
     database
       .voteOnPoll(id, votes)
       .then((result) => {
