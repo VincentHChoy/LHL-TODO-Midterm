@@ -246,78 +246,14 @@ module.exports = (router) => {
     mg.messages().send(emailData, function (error, body) {
 
       if (!body.id || error) {
-        console.log("Email unsuccessful! Use a valid email address.");
+        console.log("Email unsuccessful! Use a valid email address.", error);
         return false;
       }
-      console.log(`An email was just sent to: ${emailData.to}`);
+      console.log(`An email was just sent to: ${emailData.to}`, body);
       return true;
     });
     return;
   };
-
-  // Helper function to create junk poll data in object
-
-  // const cp = (email, question) => {
-  //   const pollIDs = Object.keys(testDataPoll);
-  //   const id = pollIDs.length;
-  //   testDataPoll[id] = {
-  //     email,
-  //     question,
-  //   };
-  //   return id;
-  // };
-
-  // const getPollQ = (id) => {
-  //   const poll = testDataPoll[id];
-  //   const question = poll.question;
-  //   return question;
-  // };
-
-  // const addOptions = (id, option0, option1, option2, option3) => {
-  //   options[id] = {
-  //     option0,
-  //     option1,
-  //     option2,
-  //     option3,
-  //     pollId: id,
-  //   };
-  // };
-
-  // const getPData = (id) => {
-  //   const poll = testDataPoll[id];
-  //   const question = poll.question;
-  //   const { option0, option1, option2, option3 } = options[id];
-
-  //   const pollData = {
-  //     question,
-  //     options: [option0, option1, option2, option3],
-  //   };
-
-  //   return pollData;
-  // };
-
-  // const getPollR = (id) => {
-  //   const result = {};
-  //   for (const v in votes) {
-  //     const vote = votes[v];
-
-  //     if (vote.pollId === id) {
-  //       for (const key in vote) {
-  //         if (key.length === 1) {
-  //           const value = parseInt(key);
-  //           const option = vote[key];
-  //           if (result[option]) {
-  //             result[option] += value;
-  //           } else {
-  //             result[option] = 0;
-  //             result[option] = value;
-  //           }
-  //         }
-  //       }
-  //     }
-  //   }
-  //   return result;
-  // };
 
   return router;
 };
