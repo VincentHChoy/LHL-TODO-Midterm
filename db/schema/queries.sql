@@ -1,7 +1,8 @@
 --get poll by email
-SELECT id, owner_email, created_at, active
+SELECT DISTINCT polls.id, question_text, options.option_text as option, polls.owner_email, created_at, active
 FROM polls
-WHERE owner_email = $1;
+JOIN options ON polls.id = options.poll_id
+WHERE polls.owner_email = $1;
 
 --vote on poll
 INSERT INTO votes 
