@@ -194,12 +194,11 @@ module.exports = (router) => {
     database
       .voteOnPoll(id, rank1, rank2, rank3, rank4)
       .then((result) => {
-        // const email = result.email;
-        console.log(result);
+        const { owner_email } = result;
         // Trigger email to poll creator
         const emailData = {
           from: "Strawpoll <hello@strawpoll.com>",
-          to: email,
+          to: owner_email,
           subject: `Someone voted on your poll ${id}!!`,
           text: `Someone voted on your poll ${id}!!`,
         };
@@ -215,29 +214,20 @@ module.exports = (router) => {
   // Show results of a poll, gets the id and question
   router.get("/poll/:id/results", (req, res) => {
     const { id } = req.params;
+    console.log("In results now.");
 
-    // database
-    //   .getAllVotes(id)
-    //   .then((result) => {
-    //     const templateVars = {
-    //       question: result.question,
-    //       countOption0: result.countOption0,
-    //       countOption1: result.countOption1,
-    //       countOption2: result.countOption2,
-    //       countOption3: result.countOption3,
-    //     };
-    //     res.render("result", templateVars);
-    //   })
-    //   .catch((e) => {
-    //     console.error(e);
-    //     res.send(e);
-    //   });
-
-    const templateVars = {
-      question: "who let the dogs out",
-      id: id,
-    };
-    res.render("results", templateVars);
+    database
+      .getAllVotes(id)
+      .then((result) => {
+        console.log(result);
+        const templateVars = {
+        };
+        res.render("results", templateVars);
+      })
+      .catch((e) => {
+        console.error(e);
+        res.send(e);
+      });
   });
 
   //ajax endpoint to get the poll data.
@@ -245,21 +235,17 @@ module.exports = (router) => {
     const { id } = req.params;
 
     // database
-    //   .getAllVotes(id)
-    //   .then((result) => {
-    //     const templateVars = {
-    //       question: result.question,
-    //       countOption0: result.countOption0,
-    //       countOption1: result.countOption1,
-    //       countOption2: result.countOption2,
-    //       countOption3: result.countOption3,
-    //     };
-    //     res.render("result", templateVars);
-    //   })
-    //   .catch((e) => {
-    //     console.error(e);
-    //     res.send(e);
-    //   });
+    // .getAllVotes(id)
+    // .then((result) => {
+    //   console.log(result);
+    //   const templateVars = {
+    //   };
+    //   res.render("results", templateVars);
+    // })
+    // .catch((e) => {
+    //   console.error(e);
+    //   res.send(e);
+    // });
 
     const options = [
       { label: "dog", y: 10 },
