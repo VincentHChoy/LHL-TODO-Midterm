@@ -42,11 +42,11 @@ const pollRoutes = require("./routes/pollRoutes");
 pollRoutes(pollRouter, db);
 app.use("/", pollRouter);
 
-// Widget routes - create and mount
-// const widgetRouter = express.Router();
-// const widgetsRoutes = require("./routes/widgets");
-// widgetsRoutes(widgetRouter, db);
-// app.use("/api/widgets", widgetRouter);
+// API routes - create and mount
+const apiRouter = express.Router();
+const apiRoutes = require("./routes/apiRoutes");
+apiRoutes(apiRouter, db);
+app.use("/api", apiRouter);
 
 // Note: mount other resources here, using the same pattern above
 
@@ -58,11 +58,6 @@ app.use("/", pollRouter);
 //   res.render("results");
 // });
 
-// database.createPoll("email", "adminID", "shareID", "questionText", "2/2/22")
-//   .then((poll) => {
-//     console.log("In Create Poll!!!!!!");
-//   })
-//   .catch((e) => res.send(e));
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}`);

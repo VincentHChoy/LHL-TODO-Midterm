@@ -11,11 +11,11 @@ VALUES ('Eva Stanley', 'sebastianguerra@ymail.com', '$2a$10$FB/BOAVhpuLvpOREQVmv
 -- ('jacksonrose@hotmail.com', 'admin link', 'submit link', 'Which TV show is best?', current_timestamp, '2022-09-22', TRUE),
 -- ('rogerpelican@gmail.com', 'admin link', 'submit link', 'Which is the best travel destination?', current_timestamp, '2022-09-22', TRUE);
 
-INSERT INTO polls (owner_email, question_text, created_at, end_date, active)
-VALUES ('victoriablackwell@outlook.com', 'Where should we eat tonight?', current_timestamp, '2022-08-08', TRUE),
-('sebastianguerra@ymail.com', 'What movie should we watch this weekend?', current_timestamp, '2022-08-08', TRUE),
-('jacksonrose@hotmail.com', 'Which TV show is best?', current_timestamp, '2022-08-08', TRUE),
-('rogerpelican@gmail.com', 'Which is the best travel destination?', current_timestamp, '2022-08-08', TRUE);
+INSERT INTO polls (owner_email, question_text, created_at, active)
+VALUES ('victoriablackwell@outlook.com', 'Where should we eat tonight?', current_timestamp, TRUE),
+('sebastianguerra@ymail.com', 'What movie should we watch this weekend?', current_timestamp, TRUE),
+('jacksonrose@hotmail.com', 'Which TV show is best?', current_timestamp, TRUE),
+('rogerpelican@gmail.com', 'Which is the best travel destination?', current_timestamp, TRUE);
 
 
 INSERT INTO options (poll_id, option_text)

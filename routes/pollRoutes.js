@@ -51,7 +51,7 @@ module.exports = (router) => {
           res.send({ error: "Couldn't create a poll!" });
           return;
         }
-        console.log(poll);
+        console.log("\nThis poll was just created:", poll);
         const id = poll.id;
         res.redirect(`/poll/${id}/options`);
       })
@@ -99,6 +99,7 @@ module.exports = (router) => {
           res.send({ error: "Couldn't create poll option1!" });
           return;
         }
+        console.log(result);
         database
           .createOptions(id, option1)
           .then((result) => {
@@ -123,7 +124,10 @@ module.exports = (router) => {
 
                     const { owner_email } = result;
                     const shareLink = `/poll/${id}`;
-                    console.log(result, shareLink);
+                    console.log(
+                      "\nOptions created, redirecting to this link now:",
+                      shareLink
+                    );
 
                     // Trigger email to poll creator
                     const emailData = {
@@ -147,20 +151,20 @@ module.exports = (router) => {
   // Show a poll and options
   router.get("/poll/:id", (req, res) => {
     const { id } = req.params;
-    console.log(id);
+    console.log("\nShowing options for poll id:", id);
     database
       .showPoll(id)
       .then((result) => {
-
+        console.log(result);
         const question = result[0].question_text;
-        const options = result.map((element)=>{
-          return element.option_text;
-        })
+        const options = result.map((element) => {
+          return element.option;
+        });
         console.log(options);
         const templateVars = {
           id,
           question,
-          options
+          options,
         };
         res.render("vote", templateVars);
       })
@@ -173,23 +177,28 @@ module.exports = (router) => {
   // Vote on a poll
   router.post("/poll/:id", (req, res) => {
     const { id } = req.params;
-    const { votes } = req.body; // ---- get as array of order from frontend via AJAX
+    const { votes } = req.body;
 
     if (!votes) {
       res.status(400).render("index", ["No poll votes received!"]);
       return;
     }
 
-    res.status(201).send({ message: "poll voted", votes });
-    database
-      .voteOnPoll(id, votes)
-      .then((result) => {
-        const email = result.email;
+    const { options } = votes; // ---- get as array of order from frontend via AJAX
+    console.log("\nVotes received from user:", options);
+    const rank1 = options[0].points;
+    const rank2 = options[1].points;
+    const rank3 = options[2].points;
+    const rank4 = options[3].points;
 
+    database
+      .voteOnPoll(id, rank1, rank2, rank3, rank4)
+      .then((result) => {
+        const { owner_email } = result;
         // Trigger email to poll creator
         const emailData = {
           from: "Strawpoll <hello@strawpoll.com>",
-          to: email,
+          to: owner_email,
           subject: `Someone voted on your poll ${id}!!`,
           text: `Someone voted on your poll ${id}!!`,
         };
@@ -205,29 +214,23 @@ module.exports = (router) => {
   // Show results of a poll, gets the id and question
   router.get("/poll/:id/results", (req, res) => {
     const { id } = req.params;
+    console.log("In results now.");
 
-    // database
-    //   .getAllVotes(id)
-    //   .then((result) => {
-    //     const templateVars = {
-    //       question: result.question,
-    //       countOption0: result.countOption0,
-    //       countOption1: result.countOption1,
-    //       countOption2: result.countOption2,
-    //       countOption3: result.countOption3,
-    //     };
-    //     res.render("result", templateVars);
-    //   })
-    //   .catch((e) => {
-    //     console.error(e);
-    //     res.send(e);
-    //   });
-
-    const templateVars = {
-      question: "who let the dogs out",
-      id: id,
-    };
-    res.render("results", templateVars);
+    database
+      .getAllVotes(id)
+      .then((result) => {
+        console.log(result);
+        const {question} = result;
+        const templateVars = {
+          id,
+          question
+        };
+        res.render("results", templateVars);
+      })
+      .catch((e) => {
+        console.error(e);
+        res.send(e);
+      });
   });
 
   //ajax endpoint to get the poll data.
@@ -235,21 +238,17 @@ module.exports = (router) => {
     const { id } = req.params;
 
     // database
-    //   .getAllVotes(id)
-    //   .then((result) => {
-    //     const templateVars = {
-    //       question: result.question,
-    //       countOption0: result.countOption0,
-    //       countOption1: result.countOption1,
-    //       countOption2: result.countOption2,
-    //       countOption3: result.countOption3,
-    //     };
-    //     res.render("result", templateVars);
-    //   })
-    //   .catch((e) => {
-    //     console.error(e);
-    //     res.send(e);
-    //   });
+    // .getAllVotes(id)
+    // .then((result) => {
+    //   console.log(result);
+    //   const templateVars = {
+    //   };
+    //   res.render("results", templateVars);
+    // })
+    // .catch((e) => {
+    //   console.error(e);
+    //   res.send(e);
+    // });
 
     const options = [
       { label: "dog", y: 10 },
@@ -260,7 +259,6 @@ module.exports = (router) => {
     ];
 
     res.json({ options });
-
   });
 
   // Helper function to generate random ID for links
@@ -287,7 +285,6 @@ module.exports = (router) => {
     //   text: 'Testing some Mailgun awesomness!'
     // };
     mg.messages().send(emailData, function (error, body) {
-
       if (!body.id || error) {
         console.log("Email unsuccessful! Use a valid email address.", error);
         return false;
