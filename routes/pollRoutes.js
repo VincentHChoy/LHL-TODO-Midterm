@@ -9,10 +9,10 @@
 require("dotenv").config();
 const mailgun = require("mailgun-js");
 const DOMAIN = process.env.MAILGUN_DOMAIN;
-// const mg = mailgun({
-//   apiKey: process.env.API_KEY_MAILGUN,
-//   domain: DOMAIN,
-// });
+const mg = mailgun({
+  apiKey: process.env.API_KEY_MAILGUN,
+  domain: DOMAIN,
+});
 
 // Database
 const database = require("../lib/db");
@@ -120,8 +120,10 @@ module.exports = (router) => {
                       res.send({ error: "Couldn't create poll option4!" });
                       return;
                     }
+
                     const { owner_email } = result;
                     const shareLink = `/poll/${id}`;
+                    console.log(result, shareLink);
 
                     // Trigger email to poll creator
                     const emailData = {
@@ -145,7 +147,7 @@ module.exports = (router) => {
   // Show a poll and options
   router.get("/poll/:id", (req, res) => {
     const { id } = req.params;
-
+    console.log(id);
     database
       .showPoll(id)
       .then((result) => {
@@ -154,8 +156,9 @@ module.exports = (router) => {
         const options = result.map((element)=>{
           return element.option_text;
         })
-
+        console.log(options);
         const templateVars = {
+          id,
           question,
           options
         };
