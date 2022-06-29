@@ -17,113 +17,6 @@ const mg = mailgun({
 // Database
 const database = require("../lib/db");
 
-const testDataPoll = {
-  0: {
-    question: "Eat where?",
-    email: "sneh.km@gmail.com",
-    id: 0,
-  },
-  1: {
-    question: "Go where?",
-    email: "bob@bob.com",
-    id: 1,
-  },
-  2: {
-    question: "Do what?",
-    email: "bill@bill.com",
-    id: 2,
-  },
-};
-
-const options = {
-  0: {
-    option0: "McDonalds",
-    option1: "Thai",
-    option2: "Home",
-    option3: "Out - doesn't matter where",
-    pollId: 0,
-  },
-  1: {
-    option0: "Hiking",
-    option1: "Skiing",
-    option2: "Running",
-    option3: "Jumping",
-    pollId: 1,
-  },
-  2: {
-    option0: "Paint",
-    option1: "Knit",
-    option2: "Make coffee",
-    option3: "Dance",
-    pollId: 2,
-  },
-};
-
-const votes = {
-  0: {
-    1: "Knit",
-    2: "Paint",
-    3: "Make coffee",
-    4: "Dance",
-    pollId: 0,
-  },
-  1: {
-    1: "Dance",
-    2: "Knit",
-    3: "Make coffee",
-    4: "Dance",
-    pollId: 0,
-  },
-  2: {
-    1: "Paint",
-    2: "Knit",
-    3: "Make coffee",
-    4: "Dance",
-    pollId: 0,
-  },
-  3: {
-    1: "Hiking",
-    2: "Running",
-    3: "Skiing",
-    4: "Jumping",
-    pollId: 1,
-  },
-  4: {
-    1: "Hiking",
-    2: "Running",
-    3: "Skiing",
-    4: "Jumping",
-    pollId: 1,
-  },
-  5: {
-    1: "Hiking",
-    2: "Running",
-    3: "Skiing",
-    4: "Jumping",
-    pollId: 1,
-  },
-  6: {
-    1: "Paint",
-    2: "Knit",
-    3: "Make coffee",
-    4: "Dance",
-    pollId: 2,
-  },
-  7: {
-    1: "Paint",
-    2: "Knit",
-    3: "Make coffee",
-    4: "Dance",
-    pollId: 2,
-  },
-  8: {
-    1: "Paint",
-    2: "Knit",
-    3: "Make coffee",
-    4: "Dance",
-    pollId: 2,
-  },
-};
 module.exports = (router) => {
   // Home page to begin the poll creation
   router.get("/poll", (req, res) => {
@@ -139,7 +32,7 @@ module.exports = (router) => {
     res.redirect("/poll");
   });
 
-  // Create new poll
+  // Create a new poll
   router.post("/poll", (req, res) => {
     const { email, question } = req.body;
 
@@ -150,20 +43,15 @@ module.exports = (router) => {
       res.status(400).render("index", message);
       return;
     }
-    // temp code
-    const idTemp = cp(email, question);
-    console.log(idTemp, testDataPoll[idTemp]);
-    res.redirect(`/poll/${idTemp}/options`);
-    return;
-    // temp code
 
     database
       .createPoll(email, question)
       .then((poll) => {
         if (!poll) {
-          res.send({ error: "Couldn't create poll!" });
+          res.send({ error: "Couldn't create a poll!" });
           return;
         }
+        console.log(poll);
         const id = poll.id;
         res.redirect(`/poll/${id}/options`);
       })
@@ -179,13 +67,6 @@ module.exports = (router) => {
       return;
     }
 
-    // temp code
-    const question = getPollQ(id);
-    const templateVars = { id, question };
-    res.render("options", templateVars);
-    return;
-    // temp code
-
     database
       .getPollQuestion(id)
       .then((poll) => {
@@ -193,7 +74,9 @@ module.exports = (router) => {
           res.send({ error: "Couldn't get question!!" });
           return;
         }
-        const templateVars = [id, poll.question];
+
+        const question = poll.question_text;
+        const templateVars = { id, question };
 
         res.render("options", templateVars);
       })
@@ -209,39 +92,54 @@ module.exports = (router) => {
       return;
     }
 
-    // temp code
-    addOptions(id, option0, option1, option2, option3);
-    const shareLink = `/poll/${id}`;
-    console.log(
-      "Link for poll to share",
-      shareLink,
-      "Options-full object",
-      options
-    );
-    res.redirect(shareLink);
-    return;
-    // temp code
-
     database
-      .createOptions(id, option0, option1, option2, option3)
+      .createOptions(id, option0)
       .then((result) => {
         if (!result) {
-          res.send({ error: "Couldn't create poll options!" });
+          res.send({ error: "Couldn't create poll option1!" });
           return;
         }
+        database
+          .createOptions(id, option1)
+          .then((result) => {
+            if (!result) {
+              res.send({ error: "Couldn't create poll option2!" });
+              return;
+            }
+            database
+              .createOptions(id, option2)
+              .then((result) => {
+                if (!result) {
+                  res.send({ error: "Couldn't create poll option3!" });
+                  return;
+                }
+                database
+                  .createOptions(id, option3)
+                  .then((result) => {
+                    if (!result) {
+                      res.send({ error: "Couldn't create poll option4!" });
+                      return;
+                    }
 
-        const { email } = result;
-        const shareLink = `/poll/${id}`;
+                    const { owner_email } = result;
+                    const shareLink = `/poll/${id}`;
+                    console.log(result, shareLink);
 
-        // Trigger email to poll creator
-        const emailData = {
-          from: "Strawpoll <hello@strawpoll.com>",
-          to: email,
-          subject: `DecisionMaker - You created a new poll and id is ${id}!!`,
-          text: `Share this poll with your friends! Link: ${shareLink}`,
-        };
-        sendEmail(emailData);
-        res.redirect(shareLink);
+                    // Trigger email to poll creator
+                    const emailData = {
+                      from: "Sneha Mahajan <sneh.km@gmail.com>",
+                      to: owner_email,
+                      subject: `DecisionMaker - You created a new poll and id is ${id}!!`,
+                      text: `Share this poll with your friends! Link: ${shareLink}`,
+                    };
+                    sendEmail(emailData);
+                    res.redirect(shareLink);
+                  })
+                  .catch((e) => res.send(e));
+              })
+              .catch((e) => res.send(e));
+          })
+          .catch((e) => res.send(e));
       })
       .catch((e) => res.send(e));
   });
@@ -249,23 +147,20 @@ module.exports = (router) => {
   // Show a poll and options
   router.get("/poll/:id", (req, res) => {
     const { id } = req.params;
-
-    // temp code
-    const templateVars = getPData(id);
-    console.log(`Poll data for id: ${id}`, templateVars);
-    res.render("vote", templateVars);
-    return;
-    // temp code
-
+    console.log(id);
     database
       .showPoll(id)
       .then((result) => {
+
+        const question = result[0].question_text;
+        const options = result.map((element)=>{
+          return element.option_text;
+        })
+        console.log(options);
         const templateVars = {
-          question: result.question,
-          option0: result.option0,
-          option1: result.option1,
-          option2: result.option2,
-          option3: result.option3,
+          id,
+          question,
+          options
         };
         res.render("vote", templateVars);
       })
@@ -278,15 +173,16 @@ module.exports = (router) => {
   // Vote on a poll
   router.post("/poll/:id", (req, res) => {
     const { id } = req.params;
-    const pollVotes = req.body; // ---- get as array of order from frontend via AJAX
+    const { votes } = req.body; // ---- get as array of order from frontend via AJAX
 
-    if (!pollVotes) {
+    if (!votes) {
       res.status(400).render("index", ["No poll votes received!"]);
       return;
     }
 
+    res.status(201).send({ message: "poll voted", votes });
     database
-      .voteOnPoll(id, pollVotes)
+      .voteOnPoll(id, votes)
       .then((result) => {
         const email = result.email;
 
@@ -306,26 +202,65 @@ module.exports = (router) => {
       });
   });
 
-  // Show results of a poll
+  // Show results of a poll, gets the id and question
   router.get("/poll/:id/results", (req, res) => {
     const { id } = req.params;
 
-    database
-      .getAllVotes(id)
-      .then((result) => {
-        const templateVars = [
-          result.question,
-          result.countOption0,
-          result.countOption1,
-          result.countOption2,
-          result.countOption3,
-        ];
-        res.render("result", templateVars);
-      })
-      .catch((e) => {
-        console.error(e);
-        res.send(e);
-      });
+    // database
+    //   .getAllVotes(id)
+    //   .then((result) => {
+    //     const templateVars = {
+    //       question: result.question,
+    //       countOption0: result.countOption0,
+    //       countOption1: result.countOption1,
+    //       countOption2: result.countOption2,
+    //       countOption3: result.countOption3,
+    //     };
+    //     res.render("result", templateVars);
+    //   })
+    //   .catch((e) => {
+    //     console.error(e);
+    //     res.send(e);
+    //   });
+
+    const templateVars = {
+      question: "who let the dogs out",
+      id: id,
+    };
+    res.render("results", templateVars);
+  });
+
+  //ajax endpoint to get the poll data.
+  router.get("/api/poll/:id/results", (req, res) => {
+    const { id } = req.params;
+
+    // database
+    //   .getAllVotes(id)
+    //   .then((result) => {
+    //     const templateVars = {
+    //       question: result.question,
+    //       countOption0: result.countOption0,
+    //       countOption1: result.countOption1,
+    //       countOption2: result.countOption2,
+    //       countOption3: result.countOption3,
+    //     };
+    //     res.render("result", templateVars);
+    //   })
+    //   .catch((e) => {
+    //     console.error(e);
+    //     res.send(e);
+    //   });
+
+    const options = [
+      { label: "dog", y: 10 },
+      { label: "cat", y: 15 },
+      { label: "banana", y: 25 },
+      { label: "mango", y: 30 },
+      { label: "grape", y: 28 },
+    ];
+
+    res.json({ options });
+
   });
 
   // Helper function to generate random ID for links
@@ -352,78 +287,15 @@ module.exports = (router) => {
     //   text: 'Testing some Mailgun awesomness!'
     // };
     mg.messages().send(emailData, function (error, body) {
+
       if (!body.id || error) {
-        console.log("Email unsuccessful! Use a valid email address.");
+        console.log("Email unsuccessful! Use a valid email address.", error);
         return false;
       }
-      console.log(`An email was just sent to: ${emailData.to}`);
+      console.log(`An email was just sent to: ${emailData.to}`, body);
       return true;
     });
     return;
-  };
-
-  // Helper function to create junk poll data in object
-
-  const cp = (email, question) => {
-    const pollIDs = Object.keys(testDataPoll);
-    const id = pollIDs.length;
-    testDataPoll[id] = {
-      email,
-      question,
-    };
-    return id;
-  };
-
-  const getPollQ = (id) => {
-    const poll = testDataPoll[id];
-    const question = poll.question;
-    return question;
-  };
-
-  const addOptions = (id, option0, option1, option2, option3) => {
-    options[id] = {
-      option0,
-      option1,
-      option2,
-      option3,
-      pollId: id,
-    };
-  };
-
-  const getPData = (id) => {
-    const poll = testDataPoll[id];
-    const question = poll.question;
-    const { option0, option1, option2, option3 } = options[id];
-
-    const pollData = {
-      question,
-      options: [option0, option1, option2, option3],
-    };
-
-    return pollData;
-  };
-
-  const getPollR = (id) => {
-    const result = {};
-    for (const v in votes) {
-      const vote = votes[v];
-
-      if (vote.pollId === id) {
-        for (const key in vote) {
-          if (key.length === 1) {
-            const value = parseInt(key);
-            const option = vote[key];
-            if (result[option]) {
-              result[option] += value;
-            } else {
-              result[option] = 0;
-              result[option] = value;
-            }
-          }
-        }
-      }
-    }
-    return result;
   };
 
   return router;

@@ -13,11 +13,15 @@ CREATE TABLE users (
 CREATE TABLE polls (
   id SERIAL PRIMARY KEY NOT NULL,
   owner_email VARCHAR(255),
-  admin_link VARCHAR(255),
-  submit_link VARCHAR(255),
+  -- admin_link VARCHAR(255),
+  -- submit_link VARCHAR(255),
   question_text VARCHAR(255) NOT NULL,
   created_at DATE NOT NULL,
+<<<<<<< HEAD
   end_date DATE,
+=======
+  -- end_date DATE NOT NULL,
+>>>>>>> master
   active BOOLEAN NOT NULL DEFAULT TRUE
 );
 
@@ -25,8 +29,12 @@ CREATE TABLE options (
   id SERIAL PRIMARY KEY NOT NULL,
   owner_email VARCHAR(255),
   poll_id INTEGER REFERENCES polls(id),
+<<<<<<< HEAD
   option_text VARCHAR(255),
   description_text VARCHAR(255) 
+=======
+  option_text VARCHAR(255)
+>>>>>>> master
 );
 
 CREATE TABLE votes (

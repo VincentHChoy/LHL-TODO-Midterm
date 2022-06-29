@@ -61,11 +61,6 @@ $(document).ready(function () {
     };
   };
 
-  const myChart = new Chart(
-    document.getElementById("myChart"),
-    chartOptions(dummyData, "pie")
-  );
-
   //copy to clipboard
 
   const copyToClipboard = function () {
@@ -80,20 +75,78 @@ $(document).ready(function () {
     const output = [];
     $("#ranking li").each(function () {
       // console.log(this.id);
-      output.push(this.id);
-
-      //targets value within list
-      //  console.log($(this).text());
+      output.push($(this).text());
     });
+    return output.map((word) =>
+      word.replace(/\r?\n|\r/g, "").replace(/ /g, "")
+    );
+  };
 
+  const getInitalValues = function () {
+    const output = {
+      options: [
+        {
+          id: 0,
+          text: "",
+          points: -1,
+        },
+        {
+          id: 1,
+          text: "",
+          points: -1,
+        },
+        {
+          id: 2,
+          text: "",
+          points: -1,
+        },
+        {
+          id: 3,
+          text: "",
+          points: -1,
+        },
+      ],
+    };
+
+    const options = getListvalues();
+
+    let i = 0;
+    for (const object of output.options) {
+      object.text = options[i];
+      i++;
+    }
     return output;
   };
 
-  const handleSubmit = () => {
+  const initalValues = getInitalValues();
+
+  const assignPoints = function (initalValues) {
+    const points = [3, 2, 1, 0];
+    const rankings = []; //[1,3,0,2]
+
+    $("#ranking li").each(function () {
+      rankings.push(parseInt(this.id));
+    });
+
+    console.log("this is rankings", rankings);
+
+    for (let i = 0; i < points.length; i++) {
+      let id = rankings.indexOf(initalValues.options[i].id); // find id relation to rankings
+      initalValues.options[i].points = points[id];
+    }
+
+    console.log(initalValues);
+    return initalValues;
+  };
+
+  const handleSubmit = function (event) {
+    event.preventDefault();
+    const id = $(this).attr("poll-id");
+
     $.ajax({
-      url: `http://localhost:8080/poll/:id`, // `http://localhost:/poll/:id/options`
+      url: `http://localhost:8080/poll/${id}`, // `http://localhost:/poll/:id/options`
       method: "POST",
-      data: getListvalues(),
+      data: { votes: assignPoints(initalValues) },
     })
       .then((data) => {
         console.log(data);
@@ -109,15 +162,29 @@ $(document).ready(function () {
 
   $("#submit-ranking").click(handleSubmit);
 
-  const getPollOptions = function () {
-    $("#poll-options input").each(function () {
-      console.log(this.value);
-      // output.push(this.id);
+  const handleResults = function (event) {
+    // event.preventDefault();
+    const id = $("#myChart").data("poll-id");
 
-      //targets value within list
-      //  console.log($(this).text());
-    });
+    $.ajax({
+      url: `http://localhost:8080/api/poll/${id}/results`, // `http://localhost:/poll/:id/options`
+      method: "GET",
+    })
+      .then((data) => {
+        console.log(data);
+        const myChart = new Chart(
+          document.getElementById("myChart"),
+          chartOptions(data.options, "pie")
+        );
+      })
+      .catch((error) => {
+        console.log(error);
+
+        if (error.status === 404) {
+          console.log("error");
+        }
+      });
   };
-
-  // $("#submit-poll").click(getPollOptions);
+  console.log("hello world");
+  handleResults();
 });

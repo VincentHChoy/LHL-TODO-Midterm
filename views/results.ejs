@@ -23,17 +23,21 @@
   <body>
     <main>
       <h1 class="text-center">Straw Poll</h1>
-      <h2 class="text-center">What is your favorite color?</h2>
+      <p class="text-center"> <%= question %> </p>
       <div class="chart-container">
-        <canvas id="myChart"></canvas>
+
+      <canvas id="myChart" data-poll-id="<%= id %>"></canvas>
+
+
       </div>
       <input
         id="myInput"
         class="copy-link"
         type="text"
-        value="strawpoll.com/randomstringhere"
+        value="strawpoll.com/<%= id %>/results"
         readonly
       />
+
       <button type="button" id="copy-button" class="btn btn-warning">
         Copy
       </button>
