@@ -42,7 +42,7 @@ const pollRoutes = require("./routes/pollRoutes");
 pollRoutes(pollRouter, db);
 app.use("/", pollRouter);
 
-// Widget routes - create and mount
+// API routes - create and mount
 const apiRouter = express.Router();
 const apiRoutes = require("./routes/apiRoutes");
 apiRoutes(apiRouter, db);
@@ -58,11 +58,6 @@ app.use("/api", apiRouter);
 //   res.render("results");
 // });
 
-// database.createPoll("email", "adminID", "shareID", "questionText", "2/2/22")
-//   .then((poll) => {
-//     console.log("In Create Poll!!!!!!");
-//   })
-//   .catch((e) => res.send(e));
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}`);
