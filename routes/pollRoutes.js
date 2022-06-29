@@ -9,10 +9,10 @@
 require("dotenv").config();
 const mailgun = require("mailgun-js");
 const DOMAIN = process.env.MAILGUN_DOMAIN;
-// const mg = mailgun({
-//   apiKey: process.env.API_KEY_MAILGUN,
-//   domain: DOMAIN,
-// });
+const mg = mailgun({
+  apiKey: process.env.API_KEY_MAILGUN,
+  domain: DOMAIN,
+});
 
 // Database
 const database = require("../lib/db");
@@ -120,8 +120,10 @@ module.exports = (router) => {
                       res.send({ error: "Couldn't create poll option4!" });
                       return;
                     }
+
                     const { owner_email } = result;
                     const shareLink = `/poll/${id}`;
+                    console.log(result, shareLink);
 
                     // Trigger email to poll creator
                     const emailData = {
@@ -145,7 +147,7 @@ module.exports = (router) => {
   // Show a poll and options
   router.get("/poll/:id", (req, res) => {
     const { id } = req.params;
-
+    console.log(id);
     database
       .showPoll(id)
       .then((result) => {
@@ -154,8 +156,9 @@ module.exports = (router) => {
         const options = result.map((element)=>{
           return element.option_text;
         })
-
+        console.log(options);
         const templateVars = {
+          id,
           question,
           options
         };
@@ -286,79 +289,14 @@ module.exports = (router) => {
     mg.messages().send(emailData, function (error, body) {
 
       if (!body.id || error) {
-        console.log("Email unsuccessful! Use a valid email address.");
+        console.log("Email unsuccessful! Use a valid email address.", error);
         return false;
       }
-      console.log(`An email was just sent to: ${emailData.to}`);
+      console.log(`An email was just sent to: ${emailData.to}`, body);
       return true;
     });
     return;
   };
-
-  // Helper function to create junk poll data in object
-
-  // const cp = (email, question) => {
-  //   const pollIDs = Object.keys(testDataPoll);
-  //   const id = pollIDs.length;
-  //   testDataPoll[id] = {
-  //     email,
-  //     question,
-  //   };
-  //   return id;
-  // };
-
-  // const getPollQ = (id) => {
-  //   const poll = testDataPoll[id];
-  //   const question = poll.question;
-  //   return question;
-  // };
-
-  // const addOptions = (id, option0, option1, option2, option3) => {
-  //   options[id] = {
-  //     option0,
-  //     option1,
-  //     option2,
-  //     option3,
-  //     pollId: id,
-  //   };
-  // };
-
-  // const getPData = (id) => {
-  //   const poll = testDataPoll[id];
-  //   const question = poll.question;
-  //   const { option0, option1, option2, option3 } = options[id];
-
-  //   const pollData = {
-  //     question,
-  //     options: [option0, option1, option2, option3],
-  //   };
-
-  //   return pollData;
-  // };
-
-  // const getPollR = (id) => {
-  //   const result = {};
-  //   for (const v in votes) {
-  //     const vote = votes[v];
-
-  //     if (vote.pollId === id) {
-  //       for (const key in vote) {
-  //         if (key.length === 1) {
-  //           const value = parseInt(key);
-  //           const option = vote[key];
-  //           if (result[option]) {
-  //             result[option] += value;
-  //           } else {
-  //             result[option] = 0;
-  //             result[option] = value;
-  //           }
-  //         }
-  //       }
-  //     }
-  //   }
-  //   return result;
-  // };
-
 
   return router;
 };
