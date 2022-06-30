@@ -51,7 +51,6 @@ module.exports = (router) => {
           res.send({ error: "Couldn't create a poll!" });
           return;
         }
-        // console.log("\nThis poll was just created:", poll);
         const id = poll.id;
         res.redirect(`/poll/${id}/options`);
       })
@@ -99,7 +98,6 @@ module.exports = (router) => {
           res.send({ error: "Couldn't create poll option1!" });
           return;
         }
-        // console.log(result);
         database
           .createOptions(id, option1)
           .then((result) => {
@@ -124,10 +122,6 @@ module.exports = (router) => {
 
                     const { owner_email } = result;
                     const shareLink = `/poll/${id}`;
-                    // console.log(
-                    //   "\nOptions created, redirecting to this link now:",
-                    //   shareLink
-                    // );
 
                     // Trigger email to poll creator
                     const emailData = {
@@ -151,16 +145,14 @@ module.exports = (router) => {
   // Show a poll and options
   router.get("/poll/:id", (req, res) => {
     const { id } = req.params;
-    // console.log("\nShowing options for poll id:", id);
+
     database
       .showPoll(id)
       .then((result) => {
-        // console.log(result);
         const question = result[0].question_text;
         const options = result.map((element) => {
           return element.option;
         });
-        // console.log(options);
         const templateVars = {
           id,
           question,
@@ -184,8 +176,7 @@ module.exports = (router) => {
       return;
     }
 
-    const { options } = votes; // ---- get as array of order from frontend via AJAX
-    // console.log("\nVotes received from user:", options);
+    const { options } = votes;
     const rank1 = options[0].points;
     const rank2 = options[1].points;
     const rank3 = options[2].points;
@@ -246,17 +237,15 @@ module.exports = (router) => {
             const labels = poll.map((element) => {
               return element.option;
             });
-            // console.log(question, labels);
-            // console.log(Object.values(result));
             const options = [];
             for (let i = 0; i < 4; i++) {
               options.push({ label: labels[i], y: votes[i] });
             }
-            // console.log(options);
+
             res.json({ options });
           })
           .catch((e) => {
-            // console.error(e);
+            console.error(e);
             res.send(e);
           });
       })
