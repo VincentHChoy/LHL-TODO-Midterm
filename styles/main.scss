@@ -89,9 +89,11 @@ div ul li:hover {
   padding: 10px;
 }
 
-.chart-container canvas {
+.chart-container {
+  display: block;
   margin: auto;
-  width: 80%;
+  width: 40%;
+
   padding: 10px;
 }
 
