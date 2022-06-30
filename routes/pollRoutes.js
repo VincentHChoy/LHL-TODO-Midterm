@@ -51,7 +51,6 @@ module.exports = (router) => {
           res.send({ error: "Couldn't create a poll!" });
           return;
         }
-        // console.log("\nThis poll was just created:", poll);
         const id = poll.id;
         res.redirect(`/poll/${id}/options`);
       })
@@ -99,7 +98,6 @@ module.exports = (router) => {
           res.send({ error: "Couldn't create poll option1!" });
           return;
         }
-        // console.log(result);
         database
           .createOptions(id, option1)
           .then((result) => {
@@ -124,10 +122,6 @@ module.exports = (router) => {
 
                     const { owner_email } = result;
                     const shareLink = `/poll/${id}`;
-                    // console.log(
-                    //   "\nOptions created, redirecting to this link now:",
-                    //   shareLink
-                    // );
 
                     // Trigger email to poll creator
                     const emailData = {
@@ -151,16 +145,14 @@ module.exports = (router) => {
   // Show a poll and options
   router.get("/poll/:id", (req, res) => {
     const { id } = req.params;
-    // console.log("\nShowing options for poll id:", id);
+
     database
       .showPoll(id)
       .then((result) => {
-        // console.log(result);
         const question = result[0].question_text;
         const options = result.map((element) => {
           return element.option;
         });
-        // console.log(options);
         const templateVars = {
           id,
           question,
@@ -169,7 +161,7 @@ module.exports = (router) => {
         res.render("vote", templateVars);
       })
       .catch((e) => {
-        // console.error(e);
+        console.error(e);
         res.send(e);
       });
   });
@@ -184,8 +176,7 @@ module.exports = (router) => {
       return;
     }
 
-    const { options } = votes; // ---- get as array of order from frontend via AJAX
-    // console.log("\nVotes received from user:", options);
+    const { options } = votes;
     const rank1 = options[0].points;
     const rank2 = options[1].points;
     const rank3 = options[2].points;
@@ -206,7 +197,7 @@ module.exports = (router) => {
         res.redirect(`/poll/${id}/results`);
       })
       .catch((e) => {
-        // console.error(e);
+        console.error(e);
         res.send(e);
       });
   });
@@ -231,64 +222,8 @@ module.exports = (router) => {
       .catch((e) => res.send(e));
   });
 
-  //ajax endpoint to get the poll data.
-  router.get("/api/poll/:id/results", (req, res) => {
-    const { id } = req.params;
-
-    database
-      .getAllVotes(id)
-      .then((result) => {
-        const votes = Object.values(result);
-        database
-          .showPoll(id)
-          .then((poll) => {
-            const question = poll[0].question_text;
-            const labels = poll.map((element) => {
-              return element.option;
-            });
-            // console.log(question, labels);
-            // console.log(Object.values(result));
-            const options = [];
-            for (let i = 0; i < 4; i++) {
-              options.push({ label: labels[i], y: votes[i] });
-            }
-            // console.log(options);
-            res.json({ options });
-          })
-          .catch((e) => {
-            // console.error(e);
-            res.send(e);
-          });
-      })
-      .catch((e) => {
-        // console.error(e);
-        res.send(e);
-      });
-  });
-
-  // Helper function to generate random ID for links
-  const generateUniqueId = () => {
-    let id = "";
-    let strLen = 6;
-    const chars =
-      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-
-    for (let i = 0; i < strLen; i++) {
-      const randIndex = Math.floor(Math.random() * chars.length);
-      id = id.concat(chars[randIndex]);
-    }
-    return id;
-  };
-
   // Helper function to send emails via mailgun
   const sendEmail = (emailData) => {
-    // Test data object for now.
-    // const data = {
-    //   from: 'Sneha Mahajan <sneh.km@gmail.com>',
-    //   to: 'sneh.km@gmail.com',
-    //   subject: 'Hello',
-    //   text: 'Testing some Mailgun awesomness!'
-    // };
     mg.messages().send(emailData, function (error, body) {
       if (!body.id || error) {
         console.log("Email unsuccessful! Use a valid email address.", error);
