@@ -147,9 +147,10 @@ $(document).ready(function () {
       url: `http://localhost:8080/poll/${id}`, // `http://localhost:/poll/:id/options`
       method: "POST",
       data: { votes: assignPoints(initalValues) },
+
     })
       .then((data) => {
-        console.log(data);
+        window.location = `http://localhost:8080/poll/${id}/results`;
       })
       .catch((error) => {
         console.log(error);
