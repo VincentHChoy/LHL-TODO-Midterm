@@ -161,7 +161,7 @@ module.exports = (router) => {
         res.render("vote", templateVars);
       })
       .catch((e) => {
-        // console.error(e);
+        console.error(e);
         res.send(e);
       });
   });
@@ -197,7 +197,7 @@ module.exports = (router) => {
         res.redirect(`/poll/${id}/results`);
       })
       .catch((e) => {
-        // console.error(e);
+        console.error(e);
         res.send(e);
       });
   });
@@ -255,29 +255,8 @@ module.exports = (router) => {
       });
   });
 
-  // Helper function to generate random ID for links
-  const generateUniqueId = () => {
-    let id = "";
-    let strLen = 6;
-    const chars =
-      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-
-    for (let i = 0; i < strLen; i++) {
-      const randIndex = Math.floor(Math.random() * chars.length);
-      id = id.concat(chars[randIndex]);
-    }
-    return id;
-  };
-
   // Helper function to send emails via mailgun
   const sendEmail = (emailData) => {
-    // Test data object for now.
-    // const data = {
-    //   from: 'Sneha Mahajan <sneh.km@gmail.com>',
-    //   to: 'sneh.km@gmail.com',
-    //   subject: 'Hello',
-    //   text: 'Testing some Mailgun awesomness!'
-    // };
     mg.messages().send(emailData, function (error, body) {
       if (!body.id || error) {
         console.log("Email unsuccessful! Use a valid email address.", error);
