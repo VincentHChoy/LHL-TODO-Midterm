@@ -222,39 +222,6 @@ module.exports = (router) => {
       .catch((e) => res.send(e));
   });
 
-  //ajax endpoint to get the poll data.
-  router.get("/api/poll/:id/results", (req, res) => {
-    const { id } = req.params;
-
-    database
-      .getAllVotes(id)
-      .then((result) => {
-        const votes = Object.values(result);
-        database
-          .showPoll(id)
-          .then((poll) => {
-            const question = poll[0].question_text;
-            const labels = poll.map((element) => {
-              return element.option;
-            });
-            const options = [];
-            for (let i = 0; i < 4; i++) {
-              options.push({ label: labels[i], y: votes[i] });
-            }
-
-            res.json({ options });
-          })
-          .catch((e) => {
-            console.error(e);
-            res.send(e);
-          });
-      })
-      .catch((e) => {
-        // console.error(e);
-        res.send(e);
-      });
-  });
-
   // Helper function to send emails via mailgun
   const sendEmail = (emailData) => {
     mg.messages().send(emailData, function (error, body) {
