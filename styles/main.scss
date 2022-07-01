@@ -3,7 +3,7 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-
+  font-family: "Courier New", Courier, monospace !important;
   background: rgb(163, 208, 219);
   background: linear-gradient(
     227deg,
@@ -16,13 +16,11 @@ body {
   );
 }
 
-
-
-main{
-  width: 60%;
+main {
+  width: 100%;
 }
 
-.poll-container{
+.poll-container {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -30,6 +28,10 @@ main{
   width: 100%;
   padding: 1em;
   margin: 1em;
+}
+
+.poll-container ul {
+  width: 50%;
 }
 
 // .poll-container form{
@@ -42,12 +44,12 @@ main{
 //   margin: 1em;
 // }
 
-div ul{
+div ul {
   list-style: none;
   padding: 1em;
 }
 
-div ul li{
+div ul li {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -58,11 +60,11 @@ div ul li{
   margin: 1em;
 }
 
-div ul li:hover{
+div ul li:hover {
   cursor: pointer;
 }
 
-.button-container{
+.button-container {
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -70,19 +72,38 @@ div ul li:hover{
   padding: 1em;
 }
 
-.button-container button{
+.drag-drop {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.button-container button {
   margin-left: 0.5em;
   margin-right: 0.5em;
 }
 
-.chart-container{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 70%;
+.chart-container {
+  margin: auto;
+  width: 50%;
+  padding: 10px;
 }
 
-.copy-link{
-  margin: 1em;
-  width: 50%;
+.chart-container {
+  display: block;
+  margin: auto;
+  width: 40%;
+
+  padding: 10px;
+}
+
+.copy-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.copy-link {
+  width: 30%;
+  padding: 10px;
 }
