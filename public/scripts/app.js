@@ -137,13 +137,12 @@ $(document).ready(function () {
     const id = $(this).attr("poll-id");
 
     $.ajax({
-      url: `http://localhost:8080/poll/${id}`, // `http://localhost:/poll/:id/options`
+      url: `/poll/${id}`, // `http://localhost:/poll/:id/options`
       method: "POST",
       data: { votes: assignPoints(initalValues) },
-
     })
       .then((data) => {
-        window.location = `http://localhost:8080/poll/${id}/results`;
+        window.location = `/poll/${id}/results`;
       })
       .catch((error) => {
         console.log(error);
@@ -161,7 +160,7 @@ $(document).ready(function () {
     const id = $("#myChart").data("poll-id");
 
     $.ajax({
-      url: `http://localhost:8080/api/poll/${id}/results`, // `http://localhost:/poll/:id/options`
+      url: `/api/poll/${id}/results`, // `http://localhost:/poll/:id/options`
       method: "GET",
     })
       .then((data) => {

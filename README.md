@@ -1,3 +1,4 @@
+=======
 # Straw Poll - Decision Maker
 
 - This decision maker web app allows users to create a ranking-based poll with multiple choices using their email address.
@@ -12,7 +13,6 @@
 !["Create options for your poll users to vote on"](https://github.com/VincentHChoy/LHL-TODO-Midterm/blob/master/screenshots/Screenshot%202022-06-30%20at%208.31.30%20PM.png?raw=true)
 !["Drag and drop to vote on the poll"](https://github.com/VincentHChoy/LHL-TODO-Midterm/blob/master/screenshots/Screenshot%202022-06-30%20at%208.33.05%20PM.pngraw=true)
 !["Poll results"](https://github.com/VincentHChoy/LHL-TODO-Midterm/blob/master/screenshots/Screenshot%202022-06-30%20at%208.33.36%20PM.png?raw=true)
-
 
 ## Getting Started
 

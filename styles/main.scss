@@ -1,8 +1,14 @@
+html{
+  height: 100vh
+}
+
 body {
   display: flex;
   justify-content: center;
+  flex-direction: column;
   align-items: center;
-  min-height: 100vh;
+  width: 100%;
+  height: 100%;
   font-family: "Courier New", Courier, monospace !important;
   background: rgb(163, 208, 219);
   background: linear-gradient(
@@ -16,8 +22,13 @@ body {
   );
 }
 
+
 main {
   width: 100%;
+}
+
+h1 {
+  font-size: 150%;
 }
 
 .poll-container {
@@ -84,18 +95,11 @@ div ul li:hover {
 }
 
 .chart-container {
-  margin: auto;
-  width: 50%;
-  padding: 10px;
-}
-
-.chart-container {
   display: block;
-  margin: auto;
-  width: 40%;
-
+  width: 30%;
   padding: 10px;
 }
+
 
 .copy-container {
   display: flex;
@@ -104,6 +108,33 @@ div ul li:hover {
 }
 
 .copy-link {
-  width: 30%;
+  width: 300px;
   padding: 10px;
+}
+
+@media only screen and (max-width: 1200px) {
+body {
+  width: 100%;
+
+}
+
+
+main {
+  width: 100%;
+}
+
+.poll-container ul {
+  width: 100%;
+}
+
+
+.chart-container {
+  width: 45%;
+  padding: 10px;
+}
+
+.copy-link {
+  width: 300px;
+  padding: 10px;
+}
 }
