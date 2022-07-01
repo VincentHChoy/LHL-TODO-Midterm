@@ -86,12 +86,12 @@ $(document).ready(function () {
     const id = $(this).attr("poll-id");
 
     $.ajax({
-      url: `http://localhost:8080/poll/${id}`, // `http://localhost:/poll/:id/options`
+      url: window.location.href, // `http://localhost:/poll/:id/options`
       method: "POST",
       data: { votes: assignPoints(initalValues) },
     })
       .then((data) => {
-        window.location = `http://localhost:8080/poll/${id}/results`;
+        window.location = window.location.href + `/poll/${id}/results`;
       })
       .catch((error) => {
         console.log(error);
