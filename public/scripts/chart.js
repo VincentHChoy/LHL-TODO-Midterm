@@ -68,12 +68,13 @@ $(document).ready(function () {
     const id = $(this).attr("poll-id");
 
     $.ajax({
-      url: window.location.href + `/poll/${id}`, // `http://localhost:/poll/:id/options`
+      url: "https://midterm-strawpoll.herokuapp.com" + `/poll/${id}`, // `http://localhost:/poll/:id/options`
       method: "POST",
       data: { votes: assignPoints(initalValues) },
     })
       .then((data) => {
-        window.location = window.location.href + `/poll/${id}/results`;
+        window.location =
+          "https://midterm-strawpoll.herokuapp.com" + `/poll/${id}/results`;
       })
       .catch((error) => {
         console.log(error);
@@ -91,7 +92,7 @@ $(document).ready(function () {
     const id = $("#myChart").data("poll-id");
 
     $.ajax({
-      url: window.location.href + `/api/poll/${id}/results`, // `http://localhost:/poll/:id/options`
+      url: `/api/poll/${id}/results`, // `http://localhost:/poll/:id/options`
       method: "GET",
     })
       .then((data) => {
