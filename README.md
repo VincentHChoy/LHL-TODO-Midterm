@@ -11,17 +11,24 @@
 
 !["Create a new poll"](https://github.com/VincentHChoy/LHL-TODO-Midterm/blob/master/screenshots/Screenshot%202022-06-30%20at%208.30.36%20PM.png?raw=true)
 !["Create options for your poll users to vote on"](https://github.com/VincentHChoy/LHL-TODO-Midterm/blob/master/screenshots/Screenshot%202022-06-30%20at%208.31.30%20PM.png?raw=true)
-!["Drag and drop to vote on the poll"](https://github.com/VincentHChoy/LHL-TODO-Midterm/blob/master/screenshots/Screenshot%202022-06-30%20at%208.33.05%20PM.pngraw=true)
-!["Poll results"](https://github.com/VincentHChoy/LHL-TODO-Midterm/blob/master/screenshots/Screenshot%202022-06-30%20at%208.33.36%20PM.png?raw=true)
+!["Drag and drop to vote on the poll"](./screenshots/Screenshot%202022-06-30%20at%208.33.05%20PM.png)
+!["Poll results"](./screenshots/Screen%20Shot%202022-07-01%20at%203.19.06%20PM.png)
 
 ## Getting Started
 
-- Install all dependencies (using the `npm install` command).
-- Run the development web server using the `node express_server.js` command.
-- Visit http://localhost:8080/
+- This application is currently served on Heroku at <https://midterm-strawpoll.herokuapp.com/poll>
 
 ## Dependencies
 
 - Node 10.x or above
 - NPM 5.x or above
 - PG 6.x
+- SASS
+- Mailgun
+- Chart JS
+
+## Known issues
+
+- Multiple options per poll or question are currently being accepted and saved to the database. In the future, this could be updated to limit to only 4 options per poll.
+
+- Mailgun currently triggers the email to be sent to the poll creator, but doesn't actually send them. Instead, emails are being queued and this is an issue that needs to still be addressed.
